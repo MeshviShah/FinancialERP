@@ -18,7 +18,7 @@ export async function getUserController(req,res) {
         
         const id = req.params.id
         const result= await getUserService(id)
-        return res.status(200).json( {data: result , res :resType.SUCCESS});    
+        return res.status(200).json( {data : result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    

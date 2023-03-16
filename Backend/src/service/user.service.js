@@ -39,7 +39,10 @@ export async function getUserService(id){                         //Fet USer By 
     
     
   ])
-         return result        
+  
+    const {password, ...hPassword } = result[0];
+        return hPassword;
+           
    
 }
 export async function getAllUserService(){
@@ -67,18 +70,33 @@ export async function getAllUserService(){
     
     
   ])
-         return result        
+        return result.map(u => {
+        const { password, ...userWithoutPassword } = u;
+        return userWithoutPassword;
+    });
    
 }
 
 export async function updateUserService(data,id){               
      
         const result = await user.findByIdAndUpdate(data,id);       //Update User By Id Query
-          return result     
+        const { username, ...hPassword } = result;
+        return hPassword     
 }
 
 export async function deleteUserService(id){
      
         const result = await user.findByIdAndDelete(id);            //Delete User By Id QUery
-         return result    
+        const { username, ...hPassword } = result;
+        return hPassword       
+}
+
+
+
+export async function getUserByEmailService({email}){                         //Fet USer By Id Query
+     
+        const result = await user.findOne({email : email})
+        return result;
+           
+   
 }

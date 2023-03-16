@@ -6,8 +6,7 @@ export async function CreatRoleService(data){
    
 }
 export async function getRoleService(id){
-     
-        const result = await role.findById(id);                         //Get Role By Id Query
+       const result = await role.findById(id);                         //Get Role By Id Query
          return result        
    
 }
