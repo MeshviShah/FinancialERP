@@ -1,54 +1,55 @@
-import { CreatUserService, getUserService, getAllUserService, updateUserService, deleteUserService } from "../service/user.service.js";
+import { CreatFirmService, getFirmService, getAllFirmService, updateFirmService, deleteFirmService } from "../service/Firm.service.js";
 import { resType } from "../response/res.types.js";
 
-//Creat User
-export async function creatUserController(req,res) {
+//creat Firm
+export async function creatFirmController(req,res) {
     try{
         const data = req.body;
-        const result= await CreatUserService(data)
+        const result= await CreatFirmService(data)
+        return res.status(200).json( {data: result , res :resType.SUCCESS});    
+    }catch(error){
+ await res.status(500).json({error:error.message})
+    }    
+}
+//get Firm By ID
+export async function getFirmController(req,res) {
+    try{
+        const id = req.params.id
+        const result= await getFirmService(id)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
 
-//get User By Id 
-export async function getUserController(req,res) {
+//get All Firm
+export async function getAllFirmController(req,res) {
     try{
         
-        const id = req.params.id
-        const result= await getUserService(id)
+        const result= await getAllFirmService()
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//get All Users
-export async function getAllUserController(req,res) {
-    try{
-        
-        const result= await getAllUserService()
-        return res.status(200).json( {data: result , res :resType.SUCCESS});    
-    }catch(error){
- await res.status(500).json({error:error.message})
-    }    
-}
-//Update User By Id
-export async function updateUserController(req,res) {
+
+//Update Firm By Id
+export async function updateFirmController(req,res) {
     try{
         const data = req.body;
         const id = req.params.id
-        const result= await updateUserService(id, data)
+        const result= await updateFirmService(id, data)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//Delete User By Id
-export async function deleteUserController(req,res) {
+
+//Delete Firm By Id
+export async function deleteFirmController(req,res) {
     try{
         const id = req.params.id
-        const result= await deleteUserService(id)
+        const result= await deleteFirmService(id)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})

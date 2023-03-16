@@ -1,28 +1,25 @@
-import mongoose  from 'mongoose'
 
-//User Schema
-const userSchema =new  mongoose.Schema({
+import mongoose  from 'mongoose'
+//Firm Schema
+const firmSchema = new mongoose.Schema({
+   
     name:{
         type:String
     },
-    password:{
+    address:{
         type:String
     },
     email:{
-        type : String
+        type:String
+    },
+    firm_image:{
+        type:String
     },
     phone:{
-        type : String
+        type:String
     },
-    firm_id:{
-        type : mongoose.Schema.ObjectId
-    },
-    role_id:{
-         type : mongoose.Schema.ObjectId
-        //type:String
-    },
-    profile_image:{
-        type : String
+    website:{
+        type:String
     },
     status:{
         type:Number
@@ -45,9 +42,7 @@ const userSchema =new  mongoose.Schema({
     deleted_by:{
         type:String
     }
-
 })
 
-const user =  mongoose.model('user' , userSchema)
-
-export {user}
+const firm = mongoose.model('firm' , firmSchema)
+export {firm}

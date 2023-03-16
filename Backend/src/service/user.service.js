@@ -1,32 +1,84 @@
-const userModel = require("../models/user.model")
-const resType = require("../response/res.types")
-
-exports.CreatUserService = async(data) =>{ 
-        const result = await userModel.create(data);   
+import { user } from "../models/user.model.js";
+ import { Types } from 'mongoose';
+ const { ObjectId } = Types;
+export async function CreatUserService(data){ 
+  const salt =await  bcrypt.genSalt(saltRounds);
+       const hash =await bcrypt.hash(data.password, salt);
+        data.password = hash
+        const result = await user.create(data);             //Creat User Query
         return result   
    
 }
-exports.getUserService = async(id) =>{
+export async function getUserService(id){                         //Fet USer By Id Query
      
-        const result = await userModel.find(id);
+        const result = await user.aggregate([
+        {
+          $match: {
+            _id: new ObjectId(id)
+        }
+        },
+   
+    {
+     
+      $lookup: {
+        from: "firms",
+        localField: "firm_id",
+        foreignField: "_id",
+        as: "firm"
+      }
+    },
+     {
+     
+      $lookup: {
+        from: "roles",
+        localField: "role_id",
+        foreignField: "_id",
+        as: "role"
+      }
+    },
+    
+    
+  ])
          return result        
    
 }
-exports.getAllUserService = async() =>{
+export async function getAllUserService(){
    
-        const result = await userModel.find();
+        const result = await user.aggregate([         //Get All User Query
+   
+    {
+     
+      $lookup: {
+        from: "firms",
+        localField: "firm_id",
+        foreignField: "_id",
+        as: "firm"
+      }
+    },
+     {
+     
+      $lookup: {
+        from: "roles",
+        localField: "role_id",
+        foreignField: "_id",
+        as: "role"
+      }
+    },
+    
+    
+  ])
          return result        
    
 }
 
-exports.updateUserService = async(data,id) =>{
+export async function updateUserService(data,id){               
      
-        const result = await userModel.create(data,id);
+        const result = await user.findByIdAndUpdate(data,id);       //Update User By Id Query
           return result     
 }
 
-exports.deleteUserService = async(id) =>{
+export async function deleteUserService(id){
      
-        const result = await userModel.create(id);
+        const result = await user.findByIdAndDelete(id);            //Delete User By Id QUery
          return result    
 }

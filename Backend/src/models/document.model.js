@@ -1,37 +1,21 @@
 import mongoose  from 'mongoose'
-
 //User Schema
-const userSchema =new  mongoose.Schema({
+const  documentSchema =new  mongoose.Schema({
     name:{
-        type:String
-    },
-    password:{
-        type:String
-    },
-    email:{
         type : String
     },
-    phone:{
+    file:{
         type : String
     },
-    firm_id:{
+    service_id:{
         type : mongoose.Schema.ObjectId
     },
-    role_id:{
+    client_id:{
          type : mongoose.Schema.ObjectId
         //type:String
     },
-    profile_image:{
+    year:{
         type : String
-    },
-    status:{
-        type:Number
-    },
-    created_data:{
-        type:Date
-    },
-    updated_data:{
-        type:Date
     },
     created_by:{
         type:String
@@ -45,9 +29,7 @@ const userSchema =new  mongoose.Schema({
     deleted_by:{
         type:String
     }
-
 })
 
-const user =  mongoose.model('user' , userSchema)
-
-export {user}
+const document = mongoose.model('document' , documentSchema)
+export {document}

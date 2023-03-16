@@ -1,54 +1,57 @@
-import { CreatUserService, getUserService, getAllUserService, updateUserService, deleteUserService } from "../service/user.service.js";
+import { CreatEvent_TypeService, getEvent_TypeService, getAllEvent_TypeService, updateEvent_TypeService, deleteEvent_TypeService } from "../service/Event_Type.service.js";
 import { resType } from "../response/res.types.js";
 
-//Creat User
-export async function creatUserController(req,res) {
+
+//creat Event_Type
+export async function creatEvent_TypeController(req,res) {
     try{
         const data = req.body;
-        const result= await CreatUserService(data)
+        const result= await CreatEvent_TypeService(data)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
 
-//get User By Id 
-export async function getUserController(req,res) {
+//Get Event_Type
+export async function getEvent_TypeController(req,res) {
     try{
-        
         const id = req.params.id
-        const result= await getUserService(id)
+        const result= await getEvent_TypeService(id)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//get All Users
-export async function getAllUserController(req,res) {
+
+//GEt All Event_Type
+export async function getAllEvent_TypeController(req,res) {
     try{
         
-        const result= await getAllUserService()
+        const result= await getAllEvent_TypeService()
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//Update User By Id
-export async function updateUserController(req,res) {
+
+//Update Event_Type
+export async function updateEvent_TypeController(req,res) {
     try{
         const data = req.body;
         const id = req.params.id
-        const result= await updateUserService(id, data)
+        const result= await updateEvent_TypeService(id, data)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//Delete User By Id
-export async function deleteUserController(req,res) {
+
+//Delete Event_Type
+export async function deleteEvent_TypeController(req,res) {
     try{
         const id = req.params.id
-        const result= await deleteUserService(id)
+        const result= await deleteEvent_TypeService(id)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})

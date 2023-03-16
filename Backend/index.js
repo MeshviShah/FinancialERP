@@ -1,23 +1,22 @@
-const dotenv = require('dotenv');
-const bodyParser =  require("body-parser");
-const express = require('express');
+
+import bodyParser from 'body-parser';
+import express, { json as _json } from 'express';
 const app = express();
-dotenv.config();
-const connection = require('./src/config/db.config')
-const router = require('./src/router/index')
+import 'dotenv/config.js';
+import {connection} from './src/config/db.config.js';
+import {router} from './src/router/index.js';
+import { errorHandler } from './src/helper/errorhandle.js';
+
 app.listen(process.env.PORT, () => {
     console.log(`Application is listening at port ${process.env.PORT}`)
 })
 
-app.get("/",(req,res) => {
-    console.log("hello")
-    res.send("hello")
-})
-router(app)
-app.use(express.json());
+app.use(_json());
 app.use(bodyParser.urlencoded({extended: true }));
 app.use(bodyParser.json());
+router(app)
+app.use(errorHandler)
 
 
 
-module.exports = app 
+export {app} 

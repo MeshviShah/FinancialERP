@@ -1,54 +1,52 @@
-import { CreatUserService, getUserService, getAllUserService, updateUserService, deleteUserService } from "../service/user.service.js";
+import { CreatTaskService, getTaskService, getAllTaskService, updateTaskService, deleteTaskService } from "../service/Task.service.js";
 import { resType } from "../response/res.types.js";
 
-//Creat User
-export async function creatUserController(req,res) {
+//Creat Task
+export async function creatTaskController(req,res) {
     try{
         const data = req.body;
-        const result= await CreatUserService(data)
+        const result= await CreatTaskService(data)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-
-//get User By Id 
-export async function getUserController(req,res) {
+//Get Task By Id
+export async function getTaskController(req,res) {
     try{
-        
         const id = req.params.id
-        const result= await getUserService(id)
+        const result= await getTaskService(id)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//get All Users
-export async function getAllUserController(req,res) {
+//Get All Tasks
+export async function getAllTaskController(req,res) {
     try{
         
-        const result= await getAllUserService()
+        const result= await getAllTaskService()
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//Update User By Id
-export async function updateUserController(req,res) {
+//Update Task By Id
+export async function updateTaskController(req,res) {
     try{
         const data = req.body;
         const id = req.params.id
-        const result= await updateUserService(id, data)
+        const result= await updateTaskService(id, data)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
     }    
 }
-//Delete User By Id
-export async function deleteUserController(req,res) {
+//Delete Task By Id
+export async function deleteTaskController(req,res) {
     try{
         const id = req.params.id
-        const result= await deleteUserService(id)
+        const result= await deleteTaskService(id)
         return res.status(200).json( {data: result , res :resType.SUCCESS});    
     }catch(error){
  await res.status(500).json({error:error.message})
