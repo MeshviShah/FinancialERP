@@ -4,7 +4,6 @@ export async function roleValidator(req,res,next){
 
     const result  = req.body
     if(result.name)next()   
-else{
-    return await res.status(400).json({res : resType.VALIDAION})
-}
+    else return await res.status(400).json({res : resType.VALIDAION})
+
 }

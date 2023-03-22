@@ -1,10 +1,9 @@
-import { resType } from "../response/res.types.js"
+import { resType } from "../response/res.types.js";
 
-export async function clientValidator(req,res,next){
-
-    const result  = req.body
-    if(result.name && result.firm_id && result.ca_id && service_id && gst_number)next()   
-else{
-    return await res.status(400).json({res : resType.VALIDAION})
-}
+export async function clientValidator(req, res, next) {
+  const result = req.body;
+  if (result.name && result.firm_id && result.ca_id && result.service_id && result.gst_number)
+    next();
+  else return  res.status(400).json({ res: resType.VALIDAION });
+  
 }

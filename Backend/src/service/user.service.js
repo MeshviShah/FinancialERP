@@ -1,102 +1,94 @@
 import { user } from "../models/user.model.js";
- import { Types } from 'mongoose';
- const { ObjectId } = Types;
-export async function CreatUserService(data){ 
-  const salt =await  bcrypt.genSalt(saltRounds);
-       const hash =await bcrypt.hash(data.password, salt);
-        data.password = hash
-        const result = await user.create(data);             //Creat User Query
-        return result   
-   
+import { Types } from "mongoose";
+import { passwordHash } from "../helper/passwordhash.helper.js";
+const { ObjectId } = Types;
+
+export async function CreatUserService(data) {
+  const hash = await passwordHash(data.password);
+  data.password = hash;
+  const result = await user.create(data); //Creat User Query
+  // Create a new object with all properties, but with password set to undefined
+  const response = { ...result.toObject(), password: undefined }; // we can use ...result also
+  return response;
 }
-export async function getUserService(id){                         //Fet USer By Id Query
-     
-        const result = await user.aggregate([
-        {
-          $match: {
-            _id: new ObjectId(id)
-        }
-        },
-   
+
+export async function getUserService(id) {
+  //Get USer By Id Query
+
+  const result = await user.aggregate([
     {
-     
+      $match: {
+        _id: new ObjectId(id),
+      },
+    },
+
+    {
       $lookup: {
         from: "firms",
         localField: "firm_id",
         foreignField: "_id",
-        as: "firm"
-      }
+        as: "firm",
+      },
     },
-     {
-     
+    {
       $lookup: {
         from: "roles",
         localField: "role_id",
         foreignField: "_id",
-        as: "role"
-      }
+        as: "role",
+      },
     },
-    
-    
-  ])
-  
-    const {password, ...hPassword } = result[0];
-        return hPassword;
-           
-   
+  ]);
+
+  return result;
 }
-export async function getAllUserService(){
-   
-        const result = await user.aggregate([         //Get All User Query
-   
+export async function getAllUserService() {
+  const result = await user.aggregate([
+    //Get All User Query
+
     {
-     
       $lookup: {
         from: "firms",
         localField: "firm_id",
         foreignField: "_id",
-        as: "firm"
-      }
+        as: "firm",
+      },
     },
-     {
-     
+    {
       $lookup: {
         from: "roles",
         localField: "role_id",
         foreignField: "_id",
-        as: "role"
-      }
+        as: "role",
+      },
     },
-    
-    
-  ])
-        return result.map(u => {
-        const { password, ...userWithoutPassword } = u;
-        return userWithoutPassword;
-    });
-   
+  ]);
+  return result.map((u) => {
+    const { password, ...userWithoutPassword } = u;
+    return userWithoutPassword;
+  });
 }
 
-export async function updateUserService(data,id){               
-     
-        const result = await user.findByIdAndUpdate(data,id);       //Update User By Id Query
-        const { username, ...hPassword } = result;
-        return hPassword     
+export async function updateUserService(id,data) {
+  const result = await user.findByIdAndUpdate(id,data); //Update User By Id Query
+  //const response = { ...result.toObject(), password: undefined }; // we can use ...result also
+  return result;
 }
 
-export async function deleteUserService(id){
-     
-        const result = await user.findByIdAndDelete(id);            //Delete User By Id QUery
-        const { username, ...hPassword } = result;
-        return hPassword       
+export async function deleteUserService(id) {
+  const result = await user.findByIdAndDelete(id); //Delete User By Id QUery
+  const response = { ...result.toObject(), password: undefined }; // we can use ...result also
+  return response;
 }
 
+export async function getUserByEmailService({ email }) {
+  //Fet USer By Id Query
 
+  const result = await user.findOne({ email: email });
+  return result;
+}
 
-export async function getUserByEmailService({email}){                         //Fet USer By Id Query
-     
-        const result = await user.findOne({email : email})
-        return result;
-           
-   
+export async function getUserById(id) {
+  const result = await user.findById(id);
+  return result;
 }

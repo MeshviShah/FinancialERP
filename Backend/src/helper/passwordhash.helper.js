@@ -1,9 +1,14 @@
-import { genSalt, hash as _hash, compare } from 'bcrypt';
-import { config } from 'dotenv';
- const saltRounds = parseInt(process.env.SALT)
+import { config } from "dotenv";
+import bcrypt from "bcrypt";
+const saltRounds = parseInt(process.env.SALT);
 
-export async function  passwordHash(password) {
-       const salt =await  genSalt(saltRounds);
-       const hash =await _hash(password, salt);
-        return hash      
+export async function passwordHash(password) {
+  try {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(password, salt);
+   
+    return   hash;
+  } catch (error) {
+    return 
+  }
 }
