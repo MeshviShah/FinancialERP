@@ -14,11 +14,11 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
   },
-  firm_id: {
-    type: mongoose.Schema.ObjectId,
+  firm_name: {
+    type: mongoose.Schema.Types.Mixed,
   },
-  role_id: {
-    type: mongoose.Schema.ObjectId,
+  role: {
+    type: mongoose.Schema.Types.Mixed,
     //type:String
   },
   profile_image: {

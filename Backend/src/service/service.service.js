@@ -17,7 +17,7 @@ export async function getServiceService(id) {
 
     {
       $lookup: {
-        from: "service_categorys",
+        from: "service_categories",
         localField: "category_id",
         foreignField: "_id",
         as: "category",
@@ -32,7 +32,7 @@ export async function getAllServiceService() {
   const result = await service.aggregate([
     {
       $lookup: {
-        from: "service_categorys",
+        from: "service_categories",
         localField: "category_id",
         foreignField: "_id",
         as: "category",

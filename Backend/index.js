@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import express, { json as _json } from "express";
+import cors from "cors"
 const app = express();
 import "dotenv/config.js";
 import { connection } from "./src/config/db.config.js";
@@ -11,7 +12,7 @@ app.listen(process.env.PORT, () => {
   console.log(`Application is listening at port ${process.env.PORT}`);
 });
 
-
+app.use(cors());
 app.use(_json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

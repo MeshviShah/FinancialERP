@@ -43,12 +43,40 @@ export async function getClientService(id) {
   return result;
 }
 export async function getAllClientService() {
-  const result = await client.find(); //Get All Client Query
+  const result = await client.aggregate([
+  
+    {
+      $lookup: {
+        from: "users",
+        localField: "ca_id",
+        foreignField: "_id",
+        as: "CA",
+      },
+    },
+
+    {
+      $lookup: {
+        from: "firms",
+        localField: "firm_id",
+        foreignField: "_id",
+        as: "firm",
+      },
+    },
+    {
+      $lookup: {
+        from: "services",
+        localField: "service_id",
+        foreignField: "_id",
+        as: "service",
+      },
+    },
+  ]); //Get All Client Query
   return result;
 }
 
 export async function updateClientService(data, id) {
-  const result = await client.findByIdAndUpdate(data, id); //Update Client By Id Query
+  
+  const result = await client.findByIdAndUpdate(id,data); //Update Client By Id Query
   return result;
 }
 

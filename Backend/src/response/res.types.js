@@ -7,5 +7,6 @@ export const resType = {
   DATANOTAVAIABLE: "No Data",
   INVALIDTOKEN: "Invalid token",
   INVALIDHEADER: "Missing or invalid header",
-  CORRECTPASSWORD:"Please Provide Correct Password"
+  CORRECTPASSWORD:"Please Provide Correct Password",
+  ALREADYUSED:"Link is Expired"
 };

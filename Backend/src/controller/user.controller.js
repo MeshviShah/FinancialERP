@@ -11,7 +11,9 @@ import { resType } from "../response/res.types.js";
 export async function creatUserController(req, res) {
   const data = req.body;
   const result = await CreatUserService(data);
-  return res.status(200).json({ data: result, res: resType.SUCCESS });
+  return res
+    .status(200)
+    .json({ data: result, res: resType.SUCCESS });
 }
 
 //get User By Id

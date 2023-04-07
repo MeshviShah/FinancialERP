@@ -14,6 +14,6 @@ const AuthRouter = Router();
 AuthRouter.post("/register", registerController); //Creat Auth
 AuthRouter.post("/login", loginController);
 AuthRouter.post(`/forgetpassword`, forgetPasswordController);
-AuthRouter.post(`/reset-token/:token` ,resetPasswordController);
+AuthRouter.post(`/reset-token/:token`, resetPasswordController);
 AuthRouter.post("/change-password", auth, changePassword);
 export { AuthRouter };

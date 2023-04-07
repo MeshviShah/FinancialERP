@@ -5,6 +5,7 @@ import { DocumentRouter } from "./document.router.js";
 import { EventRouter } from "./event.router.js";
 import { Event_TypeRouter } from "./event_type.router.js";
 import { FirmRouter } from "./firm.router.js";
+import { TokenRouter } from "./token.router.js";
 import { RoleRouter } from "./role.router.js";
 import { ServiceRouter } from "./service.router.js";
 import { Service_categoryRouter } from "./service_category.router.js";
@@ -25,6 +26,7 @@ const router = (app) => {
   app.use("/document", DocumentRouter);
   app.use("/client", ClientRouter);
   app.use("/", AuthRouter);
+  app.use("/token", TokenRouter);
 };
 
 export { router };

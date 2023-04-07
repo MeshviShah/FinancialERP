@@ -70,7 +70,7 @@ export async function getAllUserService() {
 }
 
 export async function updateUserService(id,data) {
-  const result = await user.findByIdAndUpdate(id,data); //Update User By Id Query
+  const result = await user.findByIdAndUpdate(id,data, { new: true }); //Update User By Id Query
   //const response = { ...result.toObject(), password: undefined }; // we can use ...result also
   return result;
 }
