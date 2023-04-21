@@ -1,4 +1,4 @@
-import axios from "axios";
+import { axio } from "../../utils/axios";
 import {
   addemployeeSuccess,
   employeeDataSuccess,
@@ -9,8 +9,8 @@ import {
 } from "../slice/employee.slice";
 
 export const employee = () => async (dispatch) => {
-  await axios
-    .get("http://localhost:5002/user")
+  await axio
+    .get("/user")
     .then((response) => {
       dispatch(employeeDataSuccess(response.data));
     })
@@ -20,8 +20,8 @@ export const employee = () => async (dispatch) => {
 };
 
 export const getOneEmployee = (id) => async (dispatch) => {
-  await axios
-    .get("http://localhost:5002/user/" + id)
+  await axio
+    .get("/user/" + id)
     .then((response) => {
       dispatch(getemployeeSuccess(response.data));
     })
@@ -31,8 +31,8 @@ export const getOneEmployee = (id) => async (dispatch) => {
 };
 
 export const addEmployee = (body) => async (dispatch) => {
-  await axios
-    .post("http://localhost:5002/user", body)
+  await axio
+    .post("/user", body)
     .then((response) => {
       dispatch(addemployeeSuccess(response.data));
     })
@@ -41,8 +41,8 @@ export const addEmployee = (body) => async (dispatch) => {
     });
 };
 export const updateEmployee = (id, body) => async (dispatch) => {
-  await axios
-    .put("http://localhost:5002/user/" + id , body)
+  await axio
+    .put("/user/" + id, body)
     .then((response) => {
       dispatch(updateemployeeSuccess(response.data));
     })
@@ -52,8 +52,8 @@ export const updateEmployee = (id, body) => async (dispatch) => {
 };
 
 export const deleteEmployee = (id) => async (dispatch) => {
-  await axios
-    .delete("http://localhost:5002/user/" + id)
+  await axio
+    .delete("/user/" + id)
     .then((response) => {
       dispatch(deleteemployeeSuccess(response.data));
     })

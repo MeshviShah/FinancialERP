@@ -8,5 +8,6 @@ export const resType = {
   INVALIDTOKEN: "Invalid token",
   INVALIDHEADER: "Missing or invalid header",
   CORRECTPASSWORD:"Please Provide Correct Password",
-  ALREADYUSED:"Link is Expired"
+  ALREADYUSED:"Link is Expired",
+  WRONG_CREDENTIAL:"Email or/and Password is/are Wrong"
 };

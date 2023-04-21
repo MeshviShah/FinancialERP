@@ -19,4 +19,5 @@ async function decrypt(text) {
      return ;
   }
 }
+
 export { decrypt };

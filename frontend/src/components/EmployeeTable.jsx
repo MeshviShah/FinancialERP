@@ -10,16 +10,22 @@ import {
   useMantineTheme,
   Title,
   Button,
-  Paper
+  Paper,
+  TextInput,
 } from "@mantine/core";
+import { IconSearch, IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { deleteEmployee, employee } from "../redux/action/employee.action.js";
 import { useNavigate } from "react-router-dom";
+import { roles } from "../redux/action/role.action.js";
 export function EmployeeTable() {
+  const [search, setSearch] = useState("");
+
+  const theme = useMantineTheme();
   const dispatch = useDispatch();
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const employees = useSelector((state) => state.employeeData);
   console.log(employees.employee.data);
   useEffect(() => {
@@ -45,14 +51,6 @@ export function EmployeeTable() {
             </Text>
           </Group>
         </td>
-        <td>
-          <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
-            <Text fz="sm" fw={500}>
-              {data?.password}
-            </Text>
-          </Group>
-        </td>
 
         <td>
           <Group spacing="sm">
@@ -74,7 +72,7 @@ export function EmployeeTable() {
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
             <Text fz="sm" fw={500} c="dimmed">
-              {data?.role}
+              {data?.role[0]?.name}
             </Text>
           </Group>
         </td>
@@ -110,13 +108,41 @@ export function EmployeeTable() {
       </tr>
     ));
   }
-
+    
+      console.log(search,"serch");
+    
   return (
     <div>
       <Group>
         <h2 align="left" fw="md" fz="xs">
           Employee List
         </h2>
+        <TextInput
+          icon={<IconSearch size="1.1rem" stroke={1.5} />}
+          radius="xl"
+          size="md"
+          ml={600}
+          type="text"
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+          rightSection={
+            <ActionIcon
+              size={32}
+              radius="xl"
+              color={theme.primaryColor}
+              variant="filled"
+            >
+              <IconArrowRight
+                size="1.1rem"
+                stroke={1.5}
+                onClick={() => navigate(`/home/?query=${search}`)}
+              />
+            </ActionIcon>
+          }
+          placeholder="Search questions"
+          rightSectionWidth={50}
+        />
         <Group justify="end">
           {" "}
           <Button
@@ -145,7 +171,6 @@ export function EmployeeTable() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Password</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Role</th>

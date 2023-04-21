@@ -5,11 +5,8 @@ const taskSchema = new mongoose.Schema({
   name: {
     type: String,
   },
-  user_id: {
-    type: mongoose.Schema.ObjectId,
-  },
   task_status: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.Mixed,
   },
   created_data: {
     type: Date,
@@ -29,6 +26,12 @@ const taskSchema = new mongoose.Schema({
   deleted_by: {
     type: String,
   },
+  user_id: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "user", // Reference to the User model
+    },
+  ],
 });
 const task = mongoose.model("task", taskSchema);
 export { task };

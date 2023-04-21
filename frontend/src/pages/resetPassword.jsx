@@ -1,30 +1,34 @@
 import { useForm } from "@mantine/form";
-import { PasswordInput, Group, Button, Box ,Paper ,Title,  Container} from "@mantine/core";
+import {
+  PasswordInput,
+  Group,
+  Button,
+  Box,
+  Paper,
+  Title,
+  Container,
+} from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPassword } from "../redux/action/password.action";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 export function ResetPassword() {
-   const { token } = useParams();
-   console.log(token,"nmesb")
-    const dispatch = useDispatch();
-     const paperStyle = {
-       width: 450,
-       height: 1200,
-     };
+  const { token } = useParams();
+  console.log(token, "nmesb");
+  const dispatch = useDispatch();
+  const paperStyle = {
+    width: 450,
+    height: 1200,
+  };
   const form = useForm({
     initialValues: {
       password: "",
-     
     },
-
-  
   });
-   const onSubmit = (values) => {
-   
-     dispatch(resetPassword(token,values));
-     form.reset();
-   };
+  const onSubmit = (values) => {
+    dispatch(resetPassword(token, values));
+    form.reset();
+  };
   const handleFieldChange = (event) => {
     const { name, value } = event.target;
     form.setFieldValue(name, value);
@@ -51,7 +55,7 @@ export function ResetPassword() {
               onChange={handleFieldChange}
               required
             />
-{/* 
+            {/* 
             <PasswordInput
               mt="sm"
               label="Confirm password"

@@ -8,27 +8,35 @@ export const passwordslice = createSlice({
   reducers: {
     forgetPasswordSuccess: (state, action) => {
       state.password = action.payload?.data;
-      state.message = action.payload?.message;
-      state.status = action.payload?.status;
+      state.message = action.payload?.res;
+      state.status = action.payload?.statusCode;
       state.isLogin = true;
       state.accessToken = action.payload?.data.accessToken;
     },
     hasError: (state, action) => {
-      state.status = action.payload?.status;
-      state.message = action.payload?.message;
+      state.status = action.payload?.statusCode;
+      state.message = action.payload?.res;
       state.error = action.payload?.error;
     },
     resetPasswordSuccess: (state, action) => {
-      console.log(state.action, "slice")
+      //console.log(state.action, "slice")
       state.password = action.payload?.data;
-      state.message = action.payload?.message;
-      state.status = action.payload?.status;
+      state.message = action.payload?.res;
+      state.status = action.payload?.statusCode;
       state.isLogin = true;
       state.accessToken = action.payload?.data.accessToken;
     },
+    chnagePasswordSuccess: (state, action) => {
+      //console.log(state.action, "slice")
+      state.password = action.payload?.data;
+      state.message = action.payload?.res;
+      state.status = action.payload?.statusCode;
+      state.isLogin = true;
+      //state.accessToken = action.payload?.data.accessToken;
+    },
   },
 });
-export const { forgetPasswordSuccess, hasError, resetPasswordSuccess } =
+export const { forgetPasswordSuccess, hasError, resetPasswordSuccess , chnagePasswordSuccess } =
   passwordslice.actions;
 
 export default passwordslice.reducer;

@@ -24,7 +24,7 @@ export function ClientTable() {
   const navigate = useNavigate();
 
   const clients = useSelector((state) => state.clientData);
-  console.log(clients.client.data);
+  //console.log(clients);
   useEffect(() => {
     dispatch(client());
   }, []);

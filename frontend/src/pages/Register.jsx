@@ -108,7 +108,7 @@ export function Register() {
               <Text color="dimmed" size="sm" align="center" mt="sm">
                 Already Account?{" "}
                 <a
-                  href="/"
+                  href="/login"
                   size="sm"
                   component="button"
                   style={{ color: "#1c7ed6" }}

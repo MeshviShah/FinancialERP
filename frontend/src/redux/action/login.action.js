@@ -1,10 +1,10 @@
-import axios from "axios";
+import { axio } from "../../utils/axios";
 import { loginSuccess, hasError } from "../slice/login.slice";
 
 export const login = (body) => async (dispatch) => {
   //console.log(body,"action")
-  await axios
-    .post("http://localhost:5002/login", body)
+  await axio
+    .post("/login", body)
     .then((response) => {
       dispatch(loginSuccess(response.data));
     })

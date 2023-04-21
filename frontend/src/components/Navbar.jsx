@@ -8,6 +8,7 @@ import {
   IconCalendarEvent,
   IconFileText,
   IconUserCircle,
+  IconChecklist,
 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
@@ -94,9 +95,13 @@ export function NavbarCom() {
           <IconUserCircle className={classes.linkIcon} stroke={1.5} />
           <span>Employee</span>
         </a>
-        <a className={cx(classes.link)} href="/home/service">
+        <a className={cx(classes.link)} href="/home/task">
+          <IconChecklist className={classes.linkIcon} stroke={1.5} />
+          <span>Task</span>
+        </a>
+        <a className={cx(classes.link)} href="/home/setting">
           <IconSettings className={classes.linkIcon} stroke={1.5} />
-          <span>Service</span>
+          <span>Setting</span>
         </a>
       </Navbar.Section>
       <Navbar.Section grow mt="md">

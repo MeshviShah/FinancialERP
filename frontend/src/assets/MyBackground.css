@@ -1,0 +1,14 @@
+.header {
+    
+    background-color: transparent !important;
+    border-bottom: none !important;
+}
+.gradiant{
+    font-weight: bold;
+    font-weight: 900;
+    background: -webkit-linear-gradient(#252726e8, #0662868e);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: "8em";
+}
+

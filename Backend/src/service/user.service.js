@@ -33,7 +33,7 @@ export async function getUserService(id) {
     {
       $lookup: {
         from: "roles",
-        localField: "role_id",
+        localField: "role",
         foreignField: "_id",
         as: "role",
       },
@@ -57,7 +57,7 @@ export async function getAllUserService() {
     {
       $lookup: {
         from: "roles",
-        localField: "role_id",
+        localField: "role",
         foreignField: "_id",
         as: "role",
       },
@@ -90,5 +90,11 @@ export async function getUserByEmailService({ email }) {
 
 export async function getUserById(id) {
   const result = await user.findById(id);
+  return result;
+}
+
+//Find user By name
+export async function getUserByName({name}) {
+  const result = await user.findOne({ name: name });
   return result;
 }

@@ -5,7 +5,7 @@ import {
   forgetPasswordController,
   resetPasswordController,
   changePassword,
-} from "../controller/Auth.controller.js";
+} from "../controller/auth.controller.js";
 import { auth } from "../middleware/auth.js";
 
 const AuthRouter = Router();

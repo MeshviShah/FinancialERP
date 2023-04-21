@@ -21,7 +21,7 @@ export function Login() {
   const dispatch = useDispatch();
   const paperStyle = {
     width: 450,
-    height: 1200,
+    height: 500,
   };
   const form = useForm({
     initialValues: {

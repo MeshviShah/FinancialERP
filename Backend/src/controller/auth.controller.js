@@ -36,10 +36,14 @@ export async function registerController(req, res) {
 export async function loginController(req, res) {
   const { email, password } = req.body;
   const data = await getUserByEmailService({ email });
-  if (!data) return res.status(404).json({ res: resType.ERROR });
+  if (!data) return res
+    .status(401)
+    .json({ res: resType.WRONG_CREDENTIAL, statusCode: 401 });
   const hash = data.password;
   const result = await passwordBcrypt(password, hash);
-  if (!result) return res.status(404).json({ res: resType.ERROR });
+  if (!result) return res
+    .status(401)
+    .json({ res: resType.WRONG_CREDENTIAL, statusCode: 401 });
   const obj = {
     email: email,
     role_id: data.role_id,
@@ -52,7 +56,11 @@ export async function loginController(req, res) {
 
   return res
     .status(200)
-    .json({ data: { data, accessToken }, res: resType.LOGGED_IN });
+    .json({
+      data: { data, accessToken },
+      res: resType.LOGGED_IN,
+      statusCode: 200,
+    });
 }
 
 //Forget PAssword Controller
@@ -73,7 +81,7 @@ export async function forgetPasswordController(req, res) {
   const link = `http://localhost:3000/reset-token/:${accessToken}`;
   console.log(link);
   const sendEmail = sendMail({ email: data.email, link: link });
-  return res.status(200).json({ res: resType.SUCCESS });
+  return res.status(200).json({ res: resType.SUCCESS, statusCode: 200});
 }
 
 export async function resetPasswordController(req, res) {
@@ -81,7 +89,9 @@ export async function resetPasswordController(req, res) {
   const authToken = authTokenn.token.substring(1);
 
   if (!authToken)
-    return res.status(404).json({ response: resType.DATANOTAVAIABLE });
+    return res
+      .status(401)
+      .json({ response: resType.WRONG_CREDENTIAL, statusCode: 401 });
   const token = await getTokenByTokenService({ token: authToken });
   // console.log(token,"gettoken")
 
@@ -89,18 +99,18 @@ export async function resetPasswordController(req, res) {
     const adata = { token: authToken };
     const addToken = await CreatTokenService(adata);
     jwt.verify(authToken, secret, async (err, payload) => {
-      if (err) return res.sendStatus(403);
+      if (err) return res.json({ res: resType.ERROR, statusCode: 403})
       const { etext } = payload;
  
       const bcryptData = await decrypt(etext);
 
       const result = await getUserByEmailService({ email: bcryptData.email });
-      if (!result) return res.sendStatus(404);
+      if (!result) return res.json({ res: resType.ERROR, statusCode: 403 });
 
       const { password } = req.body;
 
       if (!password)
-        return res.status(403).json({ response: resType.DATANOTAVAIABLE });
+        return res.json({ res: resType.DATANOTAVAIABLE, statusCode: 404 });
 
       const dat = await passwordHash(password);
        const data = {"password" : dat}
@@ -110,11 +120,13 @@ export async function resetPasswordController(req, res) {
   
       // const addToken = await CreatTokenService(adata);
       if (!passwordChange)
-        res.status(403).json({ response: resType.DATANOTAVAIABLE });
-      return res.status(200).json({ res: resType.SUCCESS });
+        res
+          .status(403)
+          .json({ response: resType.CORRECTPASSWORD, statusCode: 404 });
+      return res.status(200).json({ res: resType.SUCCESS, statusCode: 200 });
     });
   } else {
-   res.status(401).json({ res: resType.ALREADYUSED });
+   res.status(498).json({ res: resType.ALREADYUSED,statusCode: 498 });
  }
 }
 
@@ -124,10 +136,12 @@ export async function changePassword(req, res) {
   const id = req.user.id;
   const findUser = await getUserById(id);
   // console.log(findUser)
-  if (!findUser) res.status(403).json({ response: resType.DATANOTAVAIABLE });
+  if (!findUser) res.status(403).json({ response: resType.DATANOTAVAIABLE,statusCode: 403 });
   const comPass = await passwordBcrypt(password, findUser.password);
-  if (!comPass) res.status(401).json({ response: resType.CORRECTPASSWORD });
+  if (!comPass) res.status(401).json({ response: resType.CORRECTPASSWORD, statusCode: 401 });
   const data = { password: await passwordHash(newPassword) };
   const updatePassword = await updateUserService(id, data);
-  return res.status(200).json({ data: updatePassword, res: resType.SUCCESS });
+  return res
+    .status(200)
+    .json({ data: updatePassword, res: resType.SUCCESS, statusCode: 200 });
 }

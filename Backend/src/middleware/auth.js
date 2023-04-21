@@ -7,7 +7,6 @@ const secret = process.env.JWT_KEY;
 export async function auth(req, res, next) {
   try {
     const authHeader = req.headers["authorization"];
-
     if (typeof authHeader !== "undefined") {
       // Split auth header to get token
       const token = authHeader.split(" ")[1];
@@ -15,21 +14,24 @@ export async function auth(req, res, next) {
       // Verify token
       jwt.verify(token, secret, async (err, payload) => {
         if (err) return res.sendStatus(403);
+
         const { etext } = payload;
         const data = await decrypt(etext);
-        const {email} = data
-        const result = await getUserByEmailService({email});
        
-        if (!result) return res.status(401).json({ res: resType.INVALIDTOKEN });
-        
-        req.user = data
-     
+        const { email } = data;
+        const result = await getUserByEmailService({ email });
+
+        if (!result)
+          return res.json({ res: resType.INVALIDTOKEN, statusCode: 404 });
+
+        req.user = data;
+
         next();
       });
     } else {
-      return res.Status(400).json({ res: resType.INVALIDHEADER });
+      return res.json({ res: resType.INVALIDHEADER, statusCode: 400 });
     }
   } catch (error) {
-    return  res.status(500).json({ error: error.message });
+    return res.json({ error: error.message, statusCode: 500 });
   }
 }

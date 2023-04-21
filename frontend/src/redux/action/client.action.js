@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   addClientSuccess,
   clientDataSuccess,
@@ -7,10 +6,10 @@ import {
   hasError,
   updateClientSuccess,
 } from "../slice/client.slice";
-
+import { axio } from "../../utils/axios";
 export const client = () => async (dispatch) => {
-  await axios
-    .get("http://localhost:5002/client")
+  await axio
+    .get("/client")
     .then((response) => {
       dispatch(clientDataSuccess(response.data));
     })
@@ -20,8 +19,8 @@ export const client = () => async (dispatch) => {
 };
 
 export const getOneClient = (id) => async (dispatch) => {
-  await axios
-    .get("http://localhost:5002/client/" + id)
+  await axio
+    .get("/client/" + id)
     .then((response) => {
       dispatch(getClientSuccess(response.data));
     })
@@ -31,8 +30,8 @@ export const getOneClient = (id) => async (dispatch) => {
 };
 
 export const addClient = (body) => async (dispatch) => {
-  await axios
-    .post("http://localhost:5002/client", body)
+  await axio
+    .post("/client", body)
     .then((response) => {
       dispatch(addClientSuccess(response.data));
     })
@@ -41,8 +40,8 @@ export const addClient = (body) => async (dispatch) => {
     });
 };
 export const updateClient = (id, body) => async (dispatch) => {
-  await axios
-    .put("http://localhost:5002/client/" + id, body)
+  await axio
+    .put("/client/" + id, body)
     .then((response) => {
       dispatch(updateClientSuccess(response.data));
     })
@@ -51,13 +50,13 @@ export const updateClient = (id, body) => async (dispatch) => {
     });
 };
 
-export const deleteClient = (id) => async(dispatch) => {
- await axios
-   .delete("http://localhost:5002/client/" + id)
-   .then((response) => {
-     dispatch(deleteClientSuccess(response.data));
-   })
-   .catch((err) => {
-     return dispatch(hasError(err.response?.data));
-   });
-}
+export const deleteClient = (id) => async (dispatch) => {
+  await axio
+    .delete("/client/" + id)
+    .then((response) => {
+      dispatch(deleteClientSuccess(response.data));
+    })
+    .catch((err) => {
+      return dispatch(hasError(err.response?.data));
+    });
+};

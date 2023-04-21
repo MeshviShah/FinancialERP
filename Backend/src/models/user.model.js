@@ -18,8 +18,8 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
   },
   role: {
-    type: mongoose.Schema.Types.Mixed,
-    //type:String
+    type: mongoose.Schema.ObjectId,
+    ref: "role",
   },
   profile_image: {
     type: String,
