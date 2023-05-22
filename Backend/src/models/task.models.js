@@ -6,7 +6,7 @@ const taskSchema = new mongoose.Schema({
     type: String,
   },
   task_status: {
-    type: mongoose.Schema.Types.Mixed,
+    type: String,
   },
   created_data: {
     type: Date,
@@ -25,6 +25,10 @@ const taskSchema = new mongoose.Schema({
   },
   deleted_by: {
     type: String,
+  },
+  client_id: {
+    type: mongoose.Schema.ObjectId,
+    ref:"client"
   },
   user_id: [
     {

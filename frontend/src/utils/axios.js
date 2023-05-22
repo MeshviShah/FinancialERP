@@ -1,13 +1,13 @@
 import axios from "axios";
 const axioo = () => {
-  let baseURL = "http://localhost:5002";
-  let headers = { "Content-type": "application/json" };
+  let baseURL = "http://192.168.1.44:5002";
+  let headers = {};
   const user = localStorage.getItem("accessToken");
   if (user) {
     headers = {
       Authorization: `Bearer ${user}`,
-      "Content-Type": "application/json",
-      timeout: 10000,
+      //"Content-Type": "application/json",
+      //timeout: 30000,
     };
   }
   return { headers, baseURL };

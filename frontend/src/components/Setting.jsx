@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Avatar,
   TextInput,
   PasswordInput,
   Checkbox,
@@ -13,11 +14,79 @@ import {
   Button,
   Image,
 } from "@mantine/core";
+import { IconCamera } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { ChangePassword } from "./ChangePassword";
-
+import { imageUpload } from "../redux/action/imageUpload.action";
+import {
+  getEmployee,
+  updateEmployee,
+} from "../redux/action/employee.action.js";
 export function Setting() {
+   const [imageUrl, setImageUrl] = useState(null);
   const dispatch = useDispatch();
+  const employee = useSelector((state) => state.employeeData);
+   const { image } = useSelector((state) => state.image);
+  console.log( employee.employee?.data,"j")
+   useEffect(() => {
+     dispatch(getEmployee());
+   }, [dispatch]);
+   
+   const form = useForm({
+     initialValues: {
+       name: "",
+       email: "",
+       phone: "",
+       profile_image: "",
+       department: "",
+     },
+   });
+   useEffect(() => {
+     if (employee.employee?.data?.length > 0) {
+       const firstEmployee = employee.employee.data[0];
+      
+       form.setValues({
+         name: firstEmployee.name || "",
+         email: firstEmployee.email || "",
+         phone: firstEmployee.phone || "",
+        profile_image: firstEmployee.profile_image || "",
+         department: firstEmployee.department || "",
+       });
+     }
+   }, [employee]);
+    const onSubmit = async (values) => {
+      if (!/^\S+@\S+$/.test(values.email)) {
+        form.setErrors({ email: "Invalid email" });
+        return;
+      }
+      if (
+        values.phone &&
+        (!/^\d+$/.test(values.phone) || values.phone.trim().length !== 10)
+      ) {
+        form.setErrors({ phone: "Invalid phone number" });
+        return;
+      }
+      
+    
+        await dispatch(
+          updateEmployee(employee?.employee?.data?.[0]?._id, {
+            ...values,
+            profile_image: image?.data?.filename,
+          })
+        ).then(() => {
+          form.reset();
+        });
+      
+    };
+     const fileupload = async (e) => {
+       const file = e.target.files[0];
+       const url = URL.createObjectURL(file);
+       setImageUrl(url);
+       const formData = new FormData();
+       formData.append("file", file);
+       console.log(formData, "meshvishah");
+       dispatch(imageUpload(formData));
+     };
   return (
     <Container my={40}>
       <Title
@@ -32,83 +101,123 @@ export function Setting() {
       <h3 align="left" fw="md" fz="xs" color="#94D82D">
         Edit Profile
       </h3>
-      <Paper shadow="sm" radius="md" p="sm" mt="sm" w={680}>
-        {/* <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
-
-        </form> */}
-        <Image
-          src="https://i.imgur.com/ZL52Q2D.png"
-          alt="Tesla Model S"
-          style={{
-            width: "300px", // Set width to desired size
-            height: "250px", // Set height to desired size
-            borderRadius: "70%", // Set borderRadius to 50% for circular shape
-            objectFit: "cover", // Maintain aspect ratio
-            marginTop: "4rem", // Add margin top if desired
-          }}
-        />
-        <TextInput
-          label="Name"
-          mt="sm"
-          placeholder="Enter Name"
-          required
-          labelProps={{ display: "flex" }}
-          variant="filled"
-        />
-        <TextInput
-          label="Email"
-          mt="sm"
-          placeholder="you@google.com"
-          required
-          labelProps={{ display: "flex" }}
-          variant="filled"
-        />
-        <TextInput
-          label="Phone"
-          mt="sm"
-          placeholder="Enter Number"
-          required
-          labelProps={{ display: "flex" }}
-          variant="filled"
-        />
-        <TextInput
-          label="Gst Number"
-          mt="sm"
-          placeholder="Enter Gst_Number"
-          required
-          labelProps={{ display: "flex" }}
-          variant="filled"
-        />
-        <TextInput
-          label="Website"
-          mt="sm"
-          labelProps={{ display: "flex" }}
-          variant="filled"
-        />
-        <TextInput
-          label="Compuny Name"
-          mt="sm"
-          labelProps={{ display: "flex" }}
-          variant="filled"
-        />
-        <TextInput
-          label="Payment"
-          mt="sm"
-          labelProps={{ display: "flex" }}
-          required
-          variant="filled"
-        />
-        <Button
-          variant="gradient"
-          gradient={{ from: "teal", to: "lime", deg: 105 }}
-          fullWidth
-          mt="xl"
-          w="30%"
-          radius="md"
-          type="submit"
+      <Paper
+        shadow="sm"
+        radius="md"
+        p="sm"
+        mt="sm"
+        w={680}
+        style={{ backgroundColor: "#F1F3F5" }}
+        // ml="8em"
+      >
+        <form
+          onSubmit={form.onSubmit((values) => onSubmit(values))}
+          encType="multipart/form-data"
         >
-          Update
-        </Button>
+          <div
+            style={{
+              position: "relative",
+            }}
+          >
+            <Avatar
+              component="a"
+              href={imageUrl || employee?.employee.data?.[0]?.profile_image}
+              target="_blank"
+              src={imageUrl || employee?.employee.data?.[0]?.profile_image}
+              alt="it's me"
+              radius="5em"
+              size="7em"
+              style={{ border: "6px solid #CED4DA" }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: "90%",
+                left: "12%",
+                transform: "translate(-50%, -50%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#CED4DA",
+                borderRadius: "50%",
+                cursor: "pointer",
+                padding: "0.3rem",
+                //border: "2px solid #CED4DA",
+              }}
+              onClick={() => {
+                const fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = "image/*";
+                fileInput.onchange = fileupload;
+                fileInput.click();
+              }}
+            >
+              <IconCamera size="1.1rem" />
+            </div>
+          </div>
+
+          <TextInput
+            label="Name"
+            mt="sm"
+            placeholder="Enter Name"
+            required
+            labelProps={{ display: "flex" }}
+            color="#DEE2E6"
+            value={form.values.name}
+            onChange={(e) =>
+              form.setValues({ ...form.values, name: e.target.value })
+            }
+   
+          />
+          <TextInput
+            label="Email"
+            mt="sm"
+            placeholder="you@google.com"
+            required
+            labelProps={{ display: "flex" }}
+            color="#DEE2E6"
+            value={form.values.email}
+            onChange={(e) =>
+              form.setValues({ ...form.values, email: e.target.value })
+            }
+          />
+          <TextInput
+            label="Phone"
+            mt="sm"
+            placeholder="Enter Number"
+            required
+            labelProps={{ display: "flex" }}
+            color="#DEE2E6"
+            value={form.values.phone}
+            onChange={(e) =>
+              form.setValues({ ...form.values, phone: e.target.value })
+            }
+          />
+          <TextInput
+            label="Department"
+            mt="sm"
+            placeholder="Enter Gst_Number"
+            required
+            labelProps={{ display: "flex" }}
+            color="#DEE2E6"
+            value={form.values.department}
+            onChange={(e) =>
+              form.setValues({ ...form.values, department: e.target.value })
+            }
+          />
+        
+          <Button
+            variant="gradient"
+            gradient={{ from: "teal", to: "lime", deg: 105 }}
+            fullWidth
+            mt="xl"
+            w="30%"
+            radius="md"
+            type="submit"
+          >
+            Update
+          </Button>
+        </form>
       </Paper>
       <ChangePassword />
     </Container>

@@ -5,11 +5,13 @@ import {
   getClientSuccess,
   hasError,
   updateClientSuccess,
+  clientCountSuccess,
 } from "../slice/client.slice";
 import { axio } from "../../utils/axios";
-export const client = () => async (dispatch) => {
+export const client = (query) => async (dispatch) => {
+  const searchQuery = query?.search ?? "";
   await axio
-    .get("/client")
+    .get(`/client/?&search=${searchQuery}`)
     .then((response) => {
       dispatch(clientDataSuccess(response.data));
     })
@@ -52,7 +54,7 @@ export const updateClient = (id, body) => async (dispatch) => {
 
 export const deleteClient = (id) => async (dispatch) => {
   await axio
-    .delete("/client/" + id)
+    .delete("/client/" , {data:id})
     .then((response) => {
       dispatch(deleteClientSuccess(response.data));
     })
@@ -60,3 +62,14 @@ export const deleteClient = (id) => async (dispatch) => {
       return dispatch(hasError(err.response?.data));
     });
 };
+
+export const clientCount = () => async(dispatch)=> {
+  await axio
+    .get("/client/count")
+    .then((response) => {
+      dispatch(clientCountSuccess(response.data));
+    })
+    .catch((err) => {
+      return dispatch(hasError(err.response?.data));
+    });
+}

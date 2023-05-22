@@ -5,12 +5,18 @@ import {
   getTaskSuccess,
   hasError,
   updateTaskSuccess,
+  taskCountSuccess,
 } from "../slice/task.slice";
 import { axio } from "../../utils/axios";
-export const tasks = () => async (dispatch) => {
+import { notifications } from "@mantine/notifications";
+export const tasks = (query) => async (dispatch) => {
+    const searchQuery = query?.search ?? "";
   await axio
-    .get("/task")
+    .get(`/task/?&search=${searchQuery}`)
     .then((response) => {
+       notifications.show({
+         title: "succ",
+       });
       dispatch(taskDatasSuccess(response.data));
     })
     .catch((err) => {
@@ -52,7 +58,7 @@ export const updateTask = (id, body) => async (dispatch) => {
 
 export const deleteTask = (id) => async (dispatch) => {
   await axio
-    .delete("/task/" + id)
+    .delete("/task/" , {data:id})
     .then((response) => {
       dispatch(deleteTaskSuccess(response.data));
     })
@@ -61,5 +67,13 @@ export const deleteTask = (id) => async (dispatch) => {
     });
 };
 
-
-
+export const taskCount = () => async (dispatch) => {
+  await axio
+    .get("/task/count")
+    .then((response) => {
+      dispatch(taskCountSuccess(response.data));
+    })
+    .catch((err) => {
+      return dispatch(hasError(err.response?.data));
+    });
+};

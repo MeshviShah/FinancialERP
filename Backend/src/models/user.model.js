@@ -14,10 +14,11 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
   },
-  firm_name: {
+  firm_id: {
     type: mongoose.Schema.Types.Mixed,
+    ref: "firm",
   },
-  role: {
+  role_id: {
     type: mongoose.Schema.ObjectId,
     ref: "role",
   },
@@ -43,6 +44,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
   },
   deleted_by: {
+    type: String,
+  },
+  department: {
     type: String,
   },
 });

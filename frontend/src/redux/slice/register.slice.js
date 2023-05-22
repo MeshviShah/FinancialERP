@@ -4,7 +4,6 @@ export const registerslice = createSlice({
   name: "register",
   initialState: {
     register: [],
-   
   },
   reducers: {
     registerSuccess: (state, action) => {

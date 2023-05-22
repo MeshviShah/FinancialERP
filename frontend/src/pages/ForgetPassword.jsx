@@ -70,7 +70,7 @@ export function ForgotPassword() {
             required
           />
           <Group position="apart" mt="lg">
-            <Anchor href="/" color="dimmed" size="sm">
+            <Anchor href="/login" color="dimmed" size="sm">
               <Center inline>
                 <IconArrowLeft size={rem(12)} stroke={1.5} />
                 <Box ml={5}>Back to the login page</Box>

@@ -17,15 +17,15 @@ export async function auth(req, res, next) {
 
         const { etext } = payload;
         const data = await decrypt(etext);
-       
+        //console.log(data,"data")
         const { email } = data;
         const result = await getUserByEmailService({ email });
 
         if (!result)
           return res.json({ res: resType.INVALIDTOKEN, statusCode: 404 });
 
-        req.user = data;
-
+        req.user = {data};
+        //console.log(req.user,"user")
         next();
       });
     } else {

@@ -1,5 +1,6 @@
 import { document } from "../models/document.model.js";
 import { Types } from "mongoose";
+import { profileImage } from "../utils/image.utils.js";
 const { ObjectId } = Types;
 
 export async function CreatDocumentService(data) {
@@ -24,8 +25,24 @@ export async function getDocumentService(id) {
     },
     {
       $lookup: {
+        from: "users",
+        localField: "user_id",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $lookup: {
+        from: "tasks",
+        localField: "task_id",
+        foreignField: "_id",
+        as: "task",
+      },
+    },
+    {
+      $lookup: {
         from: "services",
-        localField: "service_id",
+        localField: "service",
         foreignField: "_id",
         as: "service",
       },
@@ -38,7 +55,7 @@ export async function getAllDocumentService() {
     {
       $lookup: {
         from: "clients",
-        localField: "client_id",
+        localField: "client",
         foreignField: "_id",
         as: "client",
       },
@@ -46,21 +63,50 @@ export async function getAllDocumentService() {
     {
       $lookup: {
         from: "services",
-        localField: "service_id",
+        localField: "service",
         foreignField: "_id",
         as: "service",
       },
     },
   ]); //Get All Document Query
-  return result;
-}
+  return result.map((u) => {
+    const { file,  ...rest } = u;
 
+    if (file) {
+      const image = profileImage(file);
+      const updatedUser = {
+        ...rest,
+        file: image,
+      };
+
+      return updatedUser;
+    } else {
+    
+      return u;
+    }
+  });
+}
 export async function updateDocumentService(data, id) {
   const result = await document.findByIdAndUpdate(data, id); //Update Document By Id Query
   return result;
 }
 
-export async function deleteDocumentService(id) {
-  const result = await document.findByIdAndDelete(id); //Delete Document By ID query
-  return result;
+export async function deleteDocumentService(ids) {
+  const result = await document.deleteMany({ _id: { $in: ids } }); // Delete Document By ID query
+  return result.deletedCount;
+}
+
+
+export async function countDocumentService(firm_id) {
+  const result = await document.aggregate([
+    {
+      $match: {
+        firm_id: { $eq: new ObjectId(firm_id) },
+      },
+    },
+    {
+      $count: "totalCount",
+    },
+  ]);
+  return result?.[0].totalCount;
 }

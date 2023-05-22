@@ -35,20 +35,25 @@ export const Taskslice = createSlice({
       state.status = action.payload?.statusCode;
     },
     deleteTaskSuccess: (state, action) => {
-      state.task = state.task.filter(
-        (tasks) => tasks.id !== action.payload.id
-      );
+      state.task = state.task.filter((tasks) => tasks.id !== action.payload.id);
+      state.message = action.payload?.res;
+      state.status = action.payload?.statusCode;
+    },
+    taskCountSuccess: (state, action) => {
+      state.task = action.payload;
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
     },
   },
 });
 export const {
-  getTaskSuccess,taskDatasSuccess,
-   updateTaskSuccess,
+  getTaskSuccess,
+  taskDatasSuccess,
+  updateTaskSuccess,
   hasError,
   deleteTaskSuccess,
   addTaskSuccess,
+  taskCountSuccess,
 } = Taskslice.actions;
 
 export default Taskslice.reducer;

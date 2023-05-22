@@ -8,6 +8,7 @@ import { Outlet } from "react-router-dom";
 export function Home() {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
+  // console.log("homeRender")
   return (
     <AppShell
       styles={{

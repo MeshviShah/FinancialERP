@@ -16,3 +16,6 @@ const connection = connect(DATABASE,{
     process.exit();
 })
 export {connection}
+
+
+ 

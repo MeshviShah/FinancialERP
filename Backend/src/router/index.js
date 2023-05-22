@@ -12,21 +12,24 @@ import { Service_categoryRouter } from "./service_category.router.js";
 import { TaskRouter } from "./task.router.js";
 import { Task_statusRouter } from "./task_status.router.js";
 import { UserRouter } from "./user.router.js";
+import { TenderRouter } from "./tender.router.js";
+import { auth } from "../middleware/auth.js";
 
 const router = (app) => {
-  app.use("/user", UserRouter); //User
+  app.use("/user",auth, UserRouter); //User
   app.use("/firm", FirmRouter); //Firm
   app.use("/role", RoleRouter); //Role
   app.use("/event_type", Event_TypeRouter);
   app.use("/event", EventRouter);
   app.use("/task_status", Task_statusRouter);
-  app.use("/task", TaskRouter);
+  app.use("/task",auth, TaskRouter);
   app.use("/service_category", Service_categoryRouter);
   app.use("/service", ServiceRouter);
-  app.use("/document", DocumentRouter);
-  app.use("/client", ClientRouter);
+  app.use("/document",auth, DocumentRouter);
+  app.use("/client",auth, ClientRouter);
   app.use("/", AuthRouter);
   app.use("/token", TokenRouter);
+   app.use("/tender", TenderRouter);
 };
 
 export { router };

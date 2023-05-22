@@ -6,11 +6,10 @@ export const clientDataslice = createSlice({
   initialState: {
     client: [],
     //isLodding: false,
-    clients : {},
+    clients: {},
   },
   reducers: {
     clientDataSuccess: (state, action) => {
-      
       state.client = action.payload;
       state.message = action.payload?.res;
       state.status = action.payload?.status;
@@ -40,8 +39,14 @@ export const clientDataslice = createSlice({
       state.client = state.client.filter(
         (clients) => clients.id !== action.payload.id
       );
-        state.message = action.payload?.res;
+      state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
+    },
+    clientCountSuccess: (state, action) => {
+      state.client = action.payload;
+      state.message = action.payload?.res;
+      state.status = action.payload?.status;
+      state.isLodding = true;
     },
   },
 });
@@ -51,7 +56,8 @@ export const {
   updateClientSuccess,
   getClientSuccess,
   addClientSuccess,
-  deleteClientSuccess
+  deleteClientSuccess,
+  clientCountSuccess,
 } = clientDataslice.actions;
 
 export default clientDataslice.reducer;

@@ -7,12 +7,21 @@ const documentSchema = new mongoose.Schema({
   file: {
     type: String,
   },
-  service_id: {
-    type: mongoose.Schema.ObjectId,
-  },
+  service: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "service",
+    },
+  ],
   client_id: {
     type: mongoose.Schema.ObjectId,
     //type:String
+  },
+  task_id: {
+    type: mongoose.Schema.ObjectId,
+  },
+  user_id: {
+    type: mongoose.Schema.ObjectId,
   },
   year: {
     type: String,
@@ -20,10 +29,13 @@ const documentSchema = new mongoose.Schema({
   created_by: {
     type: String,
   },
-  updated_by: {
+  created_at: {
     type: String,
   },
-  deleted_data: {
+  updated_at: {
+    type: Date,
+  },
+  deleted_date: {
     type: Date,
   },
   deleted_by: {

@@ -9,8 +9,8 @@ import {
   Button,
   Paper,
   TextInput,
-  PasswordInput,
   Checkbox,
+  Select,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -35,6 +35,7 @@ export function AddClient(props) {
     company_name: "",
     website: "",
     payment: "",
+    address:"",
   });
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export function AddClient(props) {
         company_name: client.data?.[0]?.company_name || "",
         website: client.data?.[0]?.website || "",
         payment: client.data?.[0]?.payment || "",
+        address: client.data?.[0]?.address || "",
       });
     }
   }, [client, mode]);
@@ -65,7 +67,7 @@ export function AddClient(props) {
   // };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+   
     if (mode === "add") {
       dispatch(addClient(formData));
     } else {
@@ -75,27 +77,36 @@ export function AddClient(props) {
 
   return (
     <div>
-      <Group>
-        <h2 align="left" fw="md" fz="xs">
+      {/* <Group>
+        <h2 align="left" fw="md" fz="xs" ml="xl">
           {mode === "edit" ? "Client Edit" : "Client Add"}
         </h2>
-      </Group>
+      </Group> */}
 
       <ScrollArea>
         {" "}
-        <Paper shadow="sm" radius="md" p="sm" mt="sm">
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="sm"
+          mt="6em"
+          ml="15em"
+          w="60%"
+          style={{ backgroundColor: "#F1F3F5" }}
+        >
           <form onSubmit={handleSubmit}>
-            <h3 align="left" fw="md" fz="xs">
-              Client
-            </h3>
+            <h2 align="left" fw="md" fz="xs">
+              {mode === "edit" ? "CLIENT EDIT" : "CLIENT ADD"}
+            </h2>
             <TextInput
               label="Name"
               mt="sm"
               placeholder="Enter Name"
               required
               labelProps={{ display: "flex" }}
-              variant="filled"
+              color="#DEE2E6"
               value={formData.name}
+              w="100%"
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
@@ -106,8 +117,9 @@ export function AddClient(props) {
               placeholder="you@google.com"
               required
               labelProps={{ display: "flex" }}
-              variant="filled"
+              color="#DEE2E6"
               value={formData.email}
+              w="100%"
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
@@ -118,8 +130,9 @@ export function AddClient(props) {
               placeholder="Enter Number"
               required
               labelProps={{ display: "flex" }}
-              variant="filled"
+              color="#DEE2E6"
               value={formData.phone}
+              w="100%"
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
               }
@@ -129,19 +142,33 @@ export function AddClient(props) {
               mt="sm"
               placeholder="Enter Gst_Number"
               required
+              w="100%"
               labelProps={{ display: "flex" }}
-              variant="filled"
+              color="#DEE2E6"
               value={formData.gst_number}
               onChange={(e) =>
                 setFormData({ ...formData, gst_number: e.target.value })
               }
             />
             <TextInput
+              label="Payment"
+              mt="sm"
+              labelProps={{ display: "flex" }}
+              required
+              color="#DEE2E6"
+              w="100%"
+              value={formData.payment}
+              onChange={(e) =>
+                setFormData({ ...formData, payment: e.target.value })
+              }
+            />
+            <TextInput
               label="Website"
               mt="sm"
               labelProps={{ display: "flex" }}
-              variant="filled"
+              color="#DEE2E6"
               value={formData.website}
+              w="100%"
               onChange={(e) =>
                 setFormData({ ...formData, website: e.target.value })
               }
@@ -150,25 +177,15 @@ export function AddClient(props) {
               label="Compuny Name"
               mt="sm"
               labelProps={{ display: "flex" }}
-              variant="filled"
+              color="#DEE2E6"
+              w="100%"
               value={formData.company_name}
               onChange={(e) =>
                 setFormData({ ...formData, company_name: e.target.value })
               }
             />
-            <TextInput
-              label="Payment"
-              mt="sm"
-              labelProps={{ display: "flex" }}
-              required
-              variant="filled"
-              value={formData.payment}
-              onChange={(e) =>
-                setFormData({ ...formData, payment: e.target.value })
-              }
-            />
 
-            <Button fullWidth mt="xl" w="13%" radius="md" type="submit">
+            <Button fullWidth mt="xl" w="25%" radius="md" type="submit">
               {mode === "add" ? "Add Client" : "Update Client"}
             </Button>
           </form>

@@ -11,7 +11,7 @@ export const employeeDataslice = createSlice({
     employeeDataSuccess: (state, action) => {
       state.employee = action.payload;
       state.message = action.payload?.res;
-      state.status = action.payload?.status;
+      state.status = action.payload?.statusCode;
       state.isLodding = true;
     },
     hasError: (state, action) => {
@@ -29,6 +29,11 @@ export const employeeDataslice = createSlice({
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
     },
+    getOwnDataSuccess: (state, action) => {
+      state.employee = action.payload;
+      state.message = action.payload?.res;
+      state.status = action.payload?.statusCode;
+    },
     updateemployeeSuccess: (state, action) => {
       state.employee = action.payload;
       state.message = action.payload?.res;
@@ -41,6 +46,14 @@ export const employeeDataslice = createSlice({
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
     },
+    removeData: (state = {}, action) => {
+      state.employee = {};
+    },
+    employeeCountSuccess: (state, action) => {
+      state.employee = action.payload;
+      state.message = action.payload?.res;
+      state.status = action.payload?.statusCode;
+    },
   },
 });
 export const {
@@ -50,6 +63,9 @@ export const {
   getemployeeSuccess,
   addemployeeSuccess,
   deleteemployeeSuccess,
+  removeData,
+  getOwnDataSuccess,
+  employeeCountSuccess,
 } = employeeDataslice.actions;
 
 export default employeeDataslice.reducer;

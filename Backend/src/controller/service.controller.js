@@ -6,7 +6,8 @@ import {
   deleteServiceService,
 } from "../service/service.service.js";
 import { resType } from "../response/res.types.js";
-
+import { Types } from "mongoose";
+const { ObjectId } = Types;
 //Creat Service
 export async function creatServiceController(req, res) {
   const data = req.body;
@@ -19,6 +20,11 @@ export async function creatServiceController(req, res) {
 //get Service By Id
 export async function getServiceController(req, res) {
   const id = req.params.id
+   if (!ObjectId.isValid(id)) {
+     return res
+       .status(404)
+       .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+   }
   const result = await getServiceService(id);
   if (result == null || result == undefined)
     return res
@@ -43,6 +49,11 @@ export async function getAllServiceController(req, res) {
 export async function updateServiceController(req, res) {
   const data = req.body;
   const id = req.params.id;
+   if (!ObjectId.isValid(id)) {
+     return res
+       .status(404)
+       .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+   }
   const result = await updateServiceService(id, data);
   if (result == null || result == undefined)
     return res
@@ -55,6 +66,11 @@ export async function updateServiceController(req, res) {
 //Delete Service By Id
 export async function deleteServiceController(req, res) {
   const id = req.params.id;
+   if (!ObjectId.isValid(id)) {
+     return res
+       .status(404)
+       .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+   }
   const result = await deleteServiceService(id);
   if (result == null || result == undefined)
     return res

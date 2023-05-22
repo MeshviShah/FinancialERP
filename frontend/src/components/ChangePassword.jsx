@@ -36,13 +36,20 @@ export function ChangePassword() {
         Reset Password
       </h3>
 
-      <Paper shadow="sm" radius="md" p="sm" mt="sm" w={680}>
+      <Paper
+        style={{ backgroundColor: "#F1F3F5" }}
+        shadow="sm"
+        radius="md"
+        p="sm"
+        mt="sm"
+        w={680}
+      >
         <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
           <PasswordInput
             label="Old Password"
             mt="sm"
             labelProps={{ display: "flex" }}
-            variant="filled"
+            color="#DEE2E6"
             w="50%"
             name="password"
             value={form.values["password"]}
@@ -52,7 +59,7 @@ export function ChangePassword() {
             label="New Password"
             mt="sm"
             labelProps={{ display: "flex" }}
-            variant="filled"
+            color="#DEE2E6"
             w="50%"
             name="newPassword"
             value={form.values["newPassword"]}
@@ -61,7 +68,7 @@ export function ChangePassword() {
           <Button
             variant="gradient"
             gradient={{ from: "teal", to: "lime", deg: 105 }}
-             fullWidth
+            fullWidth
             mt="xl"
             w="30%"
             radius="md"

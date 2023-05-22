@@ -4,13 +4,16 @@ import {
   getAllDocumentService,
   updateDocumentService,
   deleteDocumentService,
+  countDocumentService,
 } from "../service/document.service.js";
 import { resType } from "../response/res.types.js";
-
+import { Types } from "mongoose";
+const { ObjectId } = Types;
 // --->>Creat Document
 export async function creatDocumentController(req, res) {
   const data = req.body;
-  const result = await CreatDocumentService(data);
+   const userId = req.user.data.id;
+  const result = await CreatDocumentService({...data, user_id:userId});
   return res
     .status(200)
     .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
@@ -19,6 +22,11 @@ export async function creatDocumentController(req, res) {
 //Get Document By Id
 export async function getDocumentController(req, res) {
   const id = req.params.id;
+   if (!ObjectId.isValid(id)) {
+     return res
+       .status(404)
+       .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+   }
   const result = await getDocumentService(id);
   if (result == null || result == undefined)
     return res
@@ -31,7 +39,7 @@ export async function getDocumentController(req, res) {
 //Get All Documents
 export async function getAllDocumentController(req, res) {
   const result = await getAllDocumentService();
-  if (result == null || result == undefined)
+  if (result == null || result == undefined || result.length <= 0)
     return res
       .status(404)
       .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
@@ -43,7 +51,11 @@ export async function getAllDocumentController(req, res) {
 export async function updateDocumentController(req, res) {
   const id = req.params.id;
   const data = req.body;
-
+ if (!ObjectId.isValid(id)) {
+   return res
+     .status(404)
+     .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+ }
   const result = await updateDocumentService(id, data);
   if (result == null || result == undefined)
     return res
@@ -55,8 +67,23 @@ export async function updateDocumentController(req, res) {
 }
 //Delete Document By Id
 export async function deleteDocumentController(req, res) {
-  const id = req.params.id;
+  
+   //console.log(req.body,"hi")
+   const id= req.body
+   
   const result = await deleteDocumentService(id);
+  if (result == null || result == undefined)
+    return res
+      .status(404)
+      .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+  return res
+    .status(200)
+    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+}
+
+export async function countDocumentController(req, res) {
+  const firm_id = req.user.data.firm_id;
+  const result = await countDocumentService(firm_id);
   if (result == null || result == undefined)
     return res
       .status(404)

@@ -1,32 +1,29 @@
 const defaultParams = {
   search: "", //--> search box
-  sortField: "createdAt", //--> sort column name
-  order: "DESC", // ||ASC //--> order by
-  filterField: "", //--> filter column
-  filterValue: "", //--> filter value
-  // page: '', //--> page number
-  // limit: '', //--> record limit per page
+  sortField: "", //--> sort column name
+  order: "", // ||ASC //--> order by
+  filterField: '', //--> filter column
+  filterValue: '', //--> filter value
+  page: '', //--> page number
+ limit: '', //--> record limit per page
 };
 
 const queryBuilder = (data) => {
+  //console.log(data , "search")
   const query = {};
-  data.search !== ""
+  data.search !== undefined &&  data.search !== ''
     ? (query.search = data.search
-        .replaceAll(`\\`, `\\\\`)
-        .replaceAll(`%`, `\\%`)
-        .replaceAll(`'`, `''`))
+    )
     : (query.search = defaultParams.search
-        .replaceAll("\\", "\\\\")
-        .replaceAll("%", "\\%")
-        .replaceAll(`'`, `''`));
-  data.order !== ""
+       );
+  data.order !== undefined
     ? ((query.order = data.order), (query.sortField = data.sortField))
     : ((query.order = defaultParams.order),
       (query.sortField = defaultParams.sortField));
-  data.filterField !== ""
+  data.filterField !== undefined &&  data.filterField !==''
     ? (query.filterField = data.filterField)
     : (query.filterField = defaultParams.filterField);
-  data.filterValue !== ""
+  data.filterValue !== "" && data.filterValue !== undefined
     ? (query.filterValue = data.filterValue)
     : (query.filterValue = defaultParams.filterValue);
   data.page !== ""
@@ -36,4 +33,4 @@ const queryBuilder = (data) => {
   return query;
 };
 
-module.exports = queryBuilder;
+export {queryBuilder};

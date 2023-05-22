@@ -18,18 +18,32 @@ import {
   CreatTokenService,
   getTokenByTokenService,
 } from "../service/token.service.js";
-
+import { CreatFirmService } from "../service/Firm.service.js";
+import { startSession } from "mongoose";
 // const id =new  mongoose.Types.ObjectId();
 
 const secret = process.env.JWT_KEY;
-
+const API_URL = process.env.API_URL;
 //Register Controller
 export async function registerController(req, res) {
   const result = req.body;
-  const data = await registrationAuthService(result);
+  const session = await startSession();
+   try {
+    session.startTransaction();
+  const resultfirm = await CreatFirmService(result, session); 
+  let firmId = resultfirm.id;
+  const data = await registrationAuthService({...result , firm_id : firmId}, session);
+    await session.commitTransaction();
   return res
     .status(200)
-    .json({ data: data, res: resType.SUCCESS, statusCode: 200 });
+    .json({ data: {data,resultfirm}, res: resType.SUCCESS, statusCode: 200 });
+}catch (error) {
+    await session.abortTransaction();
+
+    return res.status(500).json({ error: 'An error occurred during registration.' });
+  } finally {
+    session.endSession();
+  }
 }
 
 //Login Password Controllet
@@ -39,16 +53,17 @@ export async function loginController(req, res) {
   if (!data) return res
     .status(401)
     .json({ res: resType.WRONG_CREDENTIAL, statusCode: 401 });
-  const hash = data.password;
+  const hash = data?.[0]?.password;
+  console.log(data,"fff")
   const result = await passwordBcrypt(password, hash);
   if (!result) return res
     .status(401)
     .json({ res: resType.WRONG_CREDENTIAL, statusCode: 401 });
   const obj = {
     email: email,
-    role_id: data.role_id,
-    firm_id: data.firm_id,
-    id: data.id,
+    role_id: data?.[0].role_id,
+    firm_id: data?.[0].firm_id,
+    id: data[0].id,
   };
   const etext = await encrypt(obj);
 
@@ -78,7 +93,7 @@ export async function forgetPasswordController(req, res) {
   const accessToken = await tokenGen(etext);
   // const adata = { token: accessToken };
   //console.log(adata);
-  const link = `http://localhost:3000/reset-token/:${accessToken}`;
+  const link = `${API_URL}/reset-token/:${accessToken}`;
   console.log(link);
   const sendEmail = sendMail({ email: data.email, link: link });
   return res.status(200).json({ res: resType.SUCCESS, statusCode: 200});
@@ -145,3 +160,4 @@ export async function changePassword(req, res) {
     .status(200)
     .json({ data: updatePassword, res: resType.SUCCESS, statusCode: 200 });
 }
+

@@ -6,11 +6,16 @@ import {
   getemployeeSuccess,
   hasError,
   updateemployeeSuccess,
+  removeData,
+  getOwnDataSuccess,
+  employeeCountSuccess,
+  
 } from "../slice/employee.slice";
 
-export const employee = () => async (dispatch) => {
+export const employee = (query) => async (dispatch) => {
+  const searchQuery = query?.search ?? "";
   await axio
-    .get("/user")
+    .get(`/user/?&search=${searchQuery}`)
     .then((response) => {
       dispatch(employeeDataSuccess(response.data));
     })
@@ -29,8 +34,8 @@ export const getOneEmployee = (id) => async (dispatch) => {
       return dispatch(hasError(err.response?.data));
     });
 };
-
 export const addEmployee = (body) => async (dispatch) => {
+  console.log(body,"body")
   await axio
     .post("/user", body)
     .then((response) => {
@@ -50,12 +55,36 @@ export const updateEmployee = (id, body) => async (dispatch) => {
       return dispatch(hasError(err.response?.data));
     });
 };
-
-export const deleteEmployee = (id) => async (dispatch) => {
+export const deleteEmployee = (body) => async (dispatch) => {
+  console.log(body,"body")
   await axio
-    .delete("/user/" + id)
+    .delete("/user/" , { data: body })
     .then((response) => {
       dispatch(deleteemployeeSuccess(response.data));
+    })
+    .catch((err) => {
+      return dispatch(hasError(err.response?.data));
+    });
+};
+export const getEmployee = () => async (dispatch) => {
+  await axio
+    .get("/user/mydata" )
+    .then((response) => {
+      dispatch(getOwnDataSuccess(response.data));
+    })
+    .catch((err) => {
+      return dispatch(hasError(err.response?.data));
+    });
+};
+export const  clearData = () => async(dispatch) => {
+   dispatch(removeData())
+}
+
+export const employeeCount = () => async (dispatch) => {
+  await axio
+    .get("/user/count")
+    .then((response) => {
+      dispatch(employeeCountSuccess(response.data));
     })
     .catch((err) => {
       return dispatch(hasError(err.response?.data));

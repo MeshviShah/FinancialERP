@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 //Firm Schema
 const firmSchema = new mongoose.Schema({
-  name: {
+  firm_name: {
     type: String,
   },
-  address: {
+  firm_address: {
     type: String,
   },
-  email: {
+  firm_email: {
     type: String,
   },
   firm_image: {

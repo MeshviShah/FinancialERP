@@ -17,30 +17,43 @@ import {
   updateTask,
 } from "../redux/action/task.action";
 import { employee } from "../redux/action/employee.action.js";
+import { notifications } from "@mantine/notifications";
+import { client } from "../redux/action/client.action";
 export function AddEditTask(props) {
   const dispatch = useDispatch();
   const { id } = useParams();
   const form = useForm();
   const task = useSelector((state) => state.task);
+
+
+  useEffect(() => {
+    const statusCode = task.status;
+    const message = task.message
+    // if (statusCode === 200) {
+    //     notifications.show({
+    //       title: message
+    //     })
+    // }
+  }, [task, dispatch]);
   const employees = useSelector((state) => state.employeeData);
-  if(task && task.task && task.task.data){
-     console.log(task.task.data);
-  }
-  
+  // if(task && task.task && task.task.data){
+  //    console.log(task.task.data);
+  // }
+   const clients = useSelector((state) => state.clientData);
   useEffect(() => {
     dispatch(employee());
-  }, []);
+  }, [dispatch]);
+  useEffect(()=>{
+    dispatch(client())
+  },[dispatch])
   const [mode, setMode] = useState("add");
 
   const [formData, setFormData] = useState({
     name: "",
     user_id: [],
-    task_status : "",
-    // phone: "",
-    // gst_number: "",
-    // company_name: "",
-    // website: "",
-    // payment: "",
+    task_status: "",
+    client: ""
+ 
   });
 
   useEffect(() => {
@@ -50,30 +63,31 @@ export function AddEditTask(props) {
     }
   }, []);
   useEffect(() => {
-    if (task && mode === "edit") {
+    if (task && mode === "edit"){
+      
       setFormData({
         name: task?.task?.data?.[0]?.name || "",
-        user_id: task?.task?.data?.[0]?.user_id || "",
+        user_id: task?.task?.data?.[0]?.user?.[0]?._id || "",   
         task_status: task?.task?.data?.[0]?.task_status || "",
       });
     }
   }, [task, mode]);
 
-  // const handleInputChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (mode === "add") {
-      dispatch(addTask(formData));
+      dispatch(addTask(formData)).then(() => {
+        form.reset();
+      });;
+
     }
-    // } else {
-    //   await dispatch(updateClient(id, formData));
-    // }
+    else {
+      await dispatch(updateTask(id, formData)).then(() => {
+        form.reset();
+      });;
+    }
   };
   if (employees?.employee?.data) {
     var data = employees?.employee?.data?.map((data) => ({
@@ -84,30 +98,41 @@ export function AddEditTask(props) {
     data = []        
   }
  console.log(data)
+  if (clients?.client?.data) {
+    var clientdata = clients?.client?.data?.map((data) => ({
+      label: data?.name,
+      value: data?._id,
+    }));
+  } else {
+    clientdata = [];
+  }
   // const [selectedId, setSelectedId] = useState("");
-
   const handleSelectChange = (selectedOption) => {
-    //console.log("Selected ID:", selectedOption);
-    // var selectedId = selectedOption?.value;
-    // Update the state with the selected 'id'
       setFormData({ ...formData, user_id: selectedOption });
-    // setSelectedId(selectedId);
   };
-
+   const handleSelectClient = (selectedOption) => {
+     setFormData({ ...formData, client: selectedOption });
+   };
   return (
     <div>
-      <Group>
-        <h2 align="left" fw="md" fz="xs">
-          {mode === "edit" ? "Client Edit" : "Client Add"}
-        </h2>
-      </Group>
+      {/* <Group>
+        <h2 align="left" fw="md" fz="xs"></h2>
+      </Group> */}
 
       <ScrollArea>
         {" "}
-        <Paper shadow="sm" radius="md" p="sm" mt="sm" h={500}>
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="sm"
+          mt="6em"
+          ml="15em"
+          w="50%"
+          style={{ backgroundColor: "#F1F3F5" }}
+        >
           <form onSubmit={handleSubmit}>
             <h3 align="left" fw="md" fz="xs">
-              Client
+              {mode === "edit" ? "Task Edit" : "Task Add"}
             </h3>
             <TextInput
               label="Name"
@@ -115,12 +140,26 @@ export function AddEditTask(props) {
               placeholder="Enter Name"
               required
               labelProps={{ display: "flex" }}
-              variant="filled"
-              w="30%"
+              color="#DEE2E6"
+              w="100%"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+            />
+            <Select
+              placeholder="Pick"
+              label="Client"
+              data={clientdata}
+              value={form.values.client}
+              onChange={handleSelectClient}
+              nothingFound="No options"
+              w="100%"
+              color="#DEE2E6"
+              mt="sm"
+              labelProps={{ display: "flex" }}
+              required
+              dropdownPosition="bottom"
             />
 
             <MultiSelect
@@ -128,11 +167,11 @@ export function AddEditTask(props) {
               placeholder="Pick"
               searchable
               nothingFound="No options"
-              //maxDropdownHeight={280}
               data={data}
               onChange={handleSelectChange}
-              w="30%"
-              variant="filled"
+              value={form.values.user}
+              w="100%"
+              color="#DEE2E6"
               mt="sm"
               labelProps={{ display: "flex" }}
               required
@@ -144,15 +183,15 @@ export function AddEditTask(props) {
               placeholder="Enter Task Status"
               required
               labelProps={{ display: "flex" }}
-              variant="filled"
-              w="20%"
+              color="#DEE2E6"
+              w="100%"
               value={formData.task_status}
               onChange={(e) =>
                 setFormData({ ...formData, task_status: e.target.value })
               }
             />
-            <Button fullWidth mt="xl" w="13%" radius="md" type="submit">
-              {mode === "add" ? "Add Client" : "Update Client"}
+            <Button fullWidth mt="xl" w="20%" radius="md" type="submit">
+              {mode === "add" ? "Add Task" : "Update Task"}
             </Button>
           </form>
         </Paper>

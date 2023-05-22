@@ -1,6 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import { useState } from "react";
-import { createStyles, Navbar, Group, getStylesRef, rem } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import {
+  createStyles,
+  Navbar,
+  Group,
+  getStylesRef,
+  rem,
+  Heading,
+} from "@mantine/core";
 import {
   IconSettings,
   IconLogout,
@@ -10,16 +18,14 @@ import {
   IconUserCircle,
   IconChecklist,
 } from "@tabler/icons-react";
-
+import "../assets/MyBackground.css";
 const useStyles = createStyles((theme) => ({
   header: {
-    paddingBottom: theme.spacing.md,
-    marginBottom: `calc(${theme.spacing.md} * 1.5)`,
+    paddingBottom: theme.spacing.sm,
     borderBottom: `${rem(1)} solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2]
     }`,
   },
-
   footer: {
     paddingTop: theme.spacing.md,
     marginTop: theme.spacing.md,
@@ -63,18 +69,26 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[6],
     marginRight: theme.spacing.sm,
   },
-
 }));
 
 export function NavbarCom() {
   const { classes, cx } = useStyles();
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userInfo");
 
+    navigate("/login");
+  };
   return (
     <Navbar height={790} width={{ sm: 270 }} p="md">
       <Navbar.Section>
         <Group className={classes.header} position="apart">
           {/* <MantineLogo size={28} /> */}
-          <h1>Admin</h1>
+          <h1 fz="3rem" className="gradiant" mt="1rem">
+            Financial ERP
+          </h1>
+
           {/* <Code sx={{ fontWeight: 700 }}>v3.1.2</Code> */}
         </Group>
       </Navbar.Section>
@@ -112,7 +126,7 @@ export function NavbarCom() {
         ></a>
       </Navbar.Section>
       <Navbar.Section className={classes.footer}>
-        <div style={{ marginRight: "4rem" }}>
+        <div style={{ marginRight: "4rem" }} onClick={handleLogOut}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </div>

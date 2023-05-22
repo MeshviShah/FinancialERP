@@ -5,7 +5,6 @@ const task_statusSchema = new mongoose.Schema({
   label_name: {
     type: String,
   },
-
   created_data: {
     type: Date,
   },

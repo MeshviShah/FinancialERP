@@ -16,42 +16,73 @@ import { TaskTable } from "./components/Task";
 import { AddEditTask } from "./components/AddEditTask";
 import { WelcomePage } from "./pages/WelcomePage";
 import { ContactUS } from "./components/ContactUs";
+import { DocumentTable } from "./components/DocumentTable";
+import {AddEditDocument} from "./components/AddEditDocument"
+import { TenderList } from "./components/tender";
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import PrivateRoute from "./utils/authGuard";
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          {/* <Route exact path="/" element={<PrivateRoute />}>
-            <Route exact path="/home" element={<Home />} />
-           
-      
-            <Route path="blog
-            detail/:id" element={<BlogDetail />} />
-          </Route>  */}
-          <Route index path="/" element={<WelcomePage />} />
-          <Route index path="/contact" element={<ContactUS />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgotpassword" element={<ForgotPassword />} />
-          <Route path="/reset-token/:token" element={<ResetPassword />}></Route>
-          <Route path="/home" element={<Home />}>
-            <Route path="/home" element={<TaskCard />} />
-            <Route path="/home/client" element={<ClientTable />} />
-            <Route path="/home/employee" element={<EmployeeTable />} />
-            <Route path="/home/addclient" element={<AddClient />}>
-              <Route path="/home/addclient/:id" element={<AddClient />} />
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          spacing: {
+            xs: "1rem",
+            sm: "1.2rem",
+            md: "1.8rem",
+            lg: "2.2rem",
+            xl: "2.8rem",
+          },
+        }}
+      >
+        <Notifications limit={5} />
+
+        <BrowserRouter>
+          <Routes>
+            <Route index path="/" element={<WelcomePage />} />
+            <Route path="/contact" element={<ContactUS />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route exact path="/" element={<PrivateRoute />}>
+              <Route
+                path="/reset-token/:token"
+                element={<ResetPassword />}
+              ></Route>
+              <Route path="/home" element={<Home />}>
+                <Route path="/home" element={<TaskCard />} />
+                <Route path="/home/client" element={<ClientTable />} />
+                <Route path="/home/employee" element={<EmployeeTable />} />
+                <Route path="/home/addclient" element={<AddClient />}>
+                  <Route path="/home/addclient/:id" element={<AddClient />} />
+                </Route>
+                <Route path="/home/task" element={<TaskTable />} />
+                <Route path="/home/addtask" element={<AddEditTask />}>
+                  <Route path="/home/addtask/:id" element={<AddEditTask />} />
+                </Route>
+                <Route path="/home/setting" element={<Setting />} />
+                <Route path="/home/addemployee" element={<AddEmployee />}>
+                  <Route
+                    path="/home/addemployee/:id"
+                    element={<AddEmployee />}
+                  />
+                </Route>
+                <Route path="/home/document" element={<DocumentTable />} />
+                <Route path="/home/adddocument" element={<AddEditDocument />}>
+                  <Route
+                    path="/home/adddocument/:id"
+                    element={<AddEditDocument />}
+                  />
+                </Route>
+                <Route path="/home/event" element={<TenderList />} />
+              </Route>
             </Route>
-            <Route path="/home/task" element={<TaskTable />} />
-            <Route path="/home/addtask" element={<AddEditTask />}>
-              <Route path="/home/addtask/:id" element={<AddEditTask />} />
-            </Route>
-            <Route path="/home/setting" element={<Setting />} />
-            <Route path="/home/addemployee" element={<AddEmployee />}>
-              <Route path="/home/addemployee/:id" element={<AddEmployee />} />
-            </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </MantineProvider>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { firm } from "../models/firm.model.js";
 
 export async function CreatFirmService(data) {
+  //console.log(data,"service")
   const result = await firm.create(data); //Creat Firm Query
   return result;
 }
