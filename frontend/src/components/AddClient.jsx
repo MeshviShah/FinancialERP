@@ -59,12 +59,6 @@ export function AddClient(props) {
     }
   }, [client, mode]);
 
-  // const handleInputChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
    
@@ -174,7 +168,7 @@ export function AddClient(props) {
               }
             />
             <TextInput
-              label="Compuny Name"
+              label="Company Name"
               mt="sm"
               labelProps={{ display: "flex" }}
               color="#DEE2E6"

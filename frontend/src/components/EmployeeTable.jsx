@@ -47,7 +47,7 @@ export function EmployeeTable() {
   const searchInputRef = useRef(null);
   //const filterInputRef = useRef(null);
 const role = localStorage.getItem("role");
-//    console.log(role, "role");
+
   useEffect(() => {
     const query = queryBuilder(searchobj);
     dispatch(employee(query));
@@ -111,7 +111,6 @@ const role = localStorage.getItem("role");
         </td>
         <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
             <Text fz="sm" fw={500} c="dimmed">
               {data?.email}
             </Text>
@@ -119,8 +118,6 @@ const role = localStorage.getItem("role");
         </td>
         <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
-
             <Text fz="sm" fw={500} c="dimmed">
               {data?.phone}
             </Text>
@@ -128,7 +125,6 @@ const role = localStorage.getItem("role");
         </td>
         <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
             <Text fz="sm" fw={500} c="dimmed">
               {data?.role[0]?.name}
             </Text>
@@ -166,7 +162,7 @@ const role = localStorage.getItem("role");
     <div>
       <Group>
         <h2 align="left" fw="md" fz="xs">
-          Employee List
+          User List
         </h2>
 
         <Group justify="end">
@@ -179,7 +175,7 @@ const role = localStorage.getItem("role");
               ml="60em"
               onClick={() => handleButtonClick()}
             >
-              ADD EMPLOYEE
+              ADD USER
             </Button>
           )}
         </Group>
@@ -191,7 +187,7 @@ const role = localStorage.getItem("role");
             {" "}
             <Grid.Col span={6}>
               <h3 align="left" fw="md" fz="xs">
-                Employee
+                User
               </h3>
             </Grid.Col>
             <Grid.Col span={6}>
@@ -264,9 +260,9 @@ const role = localStorage.getItem("role");
             <tbody>
               {employees.status === 404 ? (
                 <tr>
-                  {" "}
-                  <td /> <td /> <td>No data</td> <td /> <td />
-                  <td />{" "}
+                
+                   <td>No data</td> 
+                
                 </tr>
               ) : (
                 row

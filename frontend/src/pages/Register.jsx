@@ -18,18 +18,18 @@ import { IconCamera, IconCheck, IconX } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { register } from "../redux/action/register.action";
 import { imageUpload } from "../redux/action/imageUpload.action";
-
+import { roles } from "../redux/action/role.action";
 
 export function Register() {
   
   const dispatch = useDispatch();
   const [active, setActive] = useState(0);
-  const [data, setData] = useState([{ value: "admin", label: "Admin" }]);
   const registerdata = useSelector((state) => state.register);
-  console.log(registerdata, "register");
-  // if (registerdata?.status === 200) {
-  //   showNotification("success", "Registration successful!");
-  // }
+
+
+   useEffect(() => {
+     dispatch(roles());
+   }, []);
   const [imageUrl, setImageUrl] = useState(null);
   const { image } = useSelector((state) => state.image);
   
@@ -53,6 +53,7 @@ export function Register() {
       profile_image: "",
       firm_email: "",
       firm_address: "",
+      role_id : "",
     },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
@@ -75,6 +76,20 @@ export function Register() {
     const { name, value } = event.target;
     form.setFieldValue(name, value);
   };
+  const roless = useSelector((state) => state.role);
+  if (roless?.role?.data) {
+    var data = roless?.role?.data?.map((data) => ({
+      label: data?.name,
+      value: data?._id,
+    }));
+  } else {
+    data = [];
+  }
+   const handleSelectChange = (selectedOption) => {
+     console.log("Selected ID:", selectedOption);
+     form.setValues({ ...form.values, role_id: selectedOption });
+   };
+
   const fileupload = async (e) => {
     const file = e.target.files[0];
     const url = URL.createObjectURL(file);
@@ -255,16 +270,10 @@ export function Register() {
                     mt={15}
                     label="Role"
                     data={data}
-                    placeholder="Select items or write new item and click create"
+                    placeholder="Select item"
                     nothingFound="Nothing found"
-                    searchable
-                    creatable
-                    getCreateLabel={(query) => `+ Create ${query}`}
-                    onCreate={(query) => {
-                      const item = { value: query, label: query };
-                      setData((current) => [...current, item]);
-                      return item;
-                    }}
+                    value={form.values.role_id}
+                    onChange={handleSelectChange}
                     labelProps={{ display: "flex" }}
                   />
                 </div>

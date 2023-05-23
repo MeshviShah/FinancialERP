@@ -50,7 +50,7 @@ export function DocumentTable() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const document = useSelector((state) => state.document);
-  console.log(document, "j");
+  console.log(document,"doc")
   const searchInputRef = useRef(null);
   //const filterInputRef = useRef(null);
 
@@ -71,10 +71,10 @@ export function DocumentTable() {
     selection && (dispatch(deleteDocument(selection)));
     window.location.reload();
   };
-  if (document && document.document && document.document.data) {
 
+  if (document && document.document && document.document.data) {
     var row = document?.document?.data.map((data) => (
-      <tr key={data._id}>
+      <tr key={data._id} >
         <td>
           <Checkbox
             checked={selection.includes(data._id)}
@@ -85,9 +85,10 @@ export function DocumentTable() {
         <td>
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
-            <Text fz="sm" fw={500}>
+            
+            <a href={data?.file} rel = "file noreferrer" target="_blank">
               {data?.name}
-            </Text>
+            </a>
           </Group>
         </td>
 
@@ -95,7 +96,11 @@ export function DocumentTable() {
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
             <Text fz="sm" fw={500} c="dimmed">
-              {data?.service?.[0]?.name}
+              {data?.user.map((user) => (
+                <Text key={user._id} fz="sm" fw={500} c="dimmed">
+                  {user.name},
+                </Text>
+              ))}
             </Text>
           </Group>
         </td>
@@ -107,19 +112,19 @@ export function DocumentTable() {
             </Text>
           </Group>
         </td>
-        <td>
+        {/* <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
-            <Text fz="sm" fw={500} c="dimmed">
-              {data?.file}
-            </Text>
+            
+          
           </Group>
-        </td>
+        </td> */}
         <td>
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
             <Text fz="sm" fw={500} c="dimmed">
-              {/* {data?.name} */}
+              {data?.created_at
+                ? new Date(data.created_at).toLocaleDateString("en-US")
+                : ""}
             </Text>
           </Group>
         </td>
@@ -180,7 +185,7 @@ export function DocumentTable() {
                 Document
               </h3> */}
             </Grid.Col>
-            <Grid.Col span={6}>
+            {/* <Grid.Col span={6}>
               <TextInput
                 icon={<IconSearch size="1.1rem" stroke={1.5} />}
                 radius="xl"
@@ -212,7 +217,7 @@ export function DocumentTable() {
                 placeholder="Search questions"
                 rightSectionWidth={50}
               />
-            </Grid.Col>
+            </Grid.Col> */}
           </Grid>
 
           <Table
@@ -235,9 +240,9 @@ export function DocumentTable() {
                   </ActionIcon>
                 </th>
                 <th>Name</th>
-                <th>Service</th>
+                <th>User</th>
                 <th>Client Name</th>
-                <th>File</th>
+                {/* <th>File</th> */}
                 <th>Year</th>
                 <th />
               </tr>

@@ -33,6 +33,7 @@ import {
 import { imageUpload } from "../redux/action/imageUpload.action";
 import { client } from "../redux/action/client.action";
 import { services } from "../redux/action/service.action";
+import { employee } from "../redux/action/employee.action.js";
 export function AddEditDocument(props) {
   const dispatch = useDispatch();
   // const theme = useMantineTheme();
@@ -42,8 +43,8 @@ export function AddEditDocument(props) {
       name: "",
       file: "",
       service: "",
-      client: "",
-      created_at: "",
+      client_id: "",
+      user_id:[]
     },
   });
 
@@ -52,7 +53,7 @@ export function AddEditDocument(props) {
   const document = useSelector((state) => state.document);
   console.log(document, "j");
   const { image } = useSelector((state) => state.image);
-
+const employees = useSelector((state) => state.employeeData);
   //image && form.setValues({ ...form.values, profile_image: image.data.filename });
    const clients = useSelector((state) => state.clientData)
    const service = useSelector((state) => state.service)
@@ -71,14 +72,14 @@ export function AddEditDocument(props) {
   } else {
     data = [];
   }
-  if (service?.service?.data) {
-    var serviceData = service?.service?.data?.map((data) => ({
-      label: data?.name,
-      value: data?._id,
-    }));
-  } else {
-    serviceData = [];
-  }
+  // if (service?.service?.data) {
+  //   var serviceData = service?.service?.data?.map((data) => ({
+  //     label: data?.name,
+  //     value: data?._id,
+  //   }));
+  // } else {
+  //   serviceData = [];
+  // }
 
   useEffect(() => {
     if (id) {
@@ -87,7 +88,9 @@ export function AddEditDocument(props) {
    
     }
   }, [dispatch, id]);
-
+  useEffect(() => {
+    dispatch(employee());
+  }, []);
   const [formData, setFormData] = useState({});
   useEffect(() => {
     if (document && mode === "edit") {
@@ -95,8 +98,9 @@ export function AddEditDocument(props) {
         name: document.document.data?.[0]?.name || "",
         file: document.document.data?.[0]?.file || "",
         service: document.document.data?.[0]?.service?.[0]?._id || "",
-        client: document.document.data?.[0]?.client?.[0]?._id || "",
+        client_id: document.document.data?.[0]?.client?.[0]?._id || "",
         created_at: document.document.data?.[0]?.created_at || "",
+        user_id : document.document.data?.[0].user_id || ""
       });
       // console.log("Role value:", employee.data?.[0]?.role?.[0]?._id);
     }
@@ -116,15 +120,23 @@ export function AddEditDocument(props) {
       });
     }
   };
-
+  if (employees?.employee?.data) {
+    var Edata = employees?.employee?.data?.map((data) => ({
+      label: data?.name,
+      value: data?._id,
+    }));
+  } else {
+    Edata = [];
+  }
   const handleSelectChange = (selectedOption) => {
     console.log("Selected ID:", selectedOption);
-    form.setValues({ ...form.values, client: selectedOption });
+    form.setValues({ ...form.values, client_id: selectedOption });
   };
-  const handleSelectServiceChange = (selectedOption) => {
-    console.log("Selected ID:", selectedOption);
-    form.setValues({ ...form.values, service: selectedOption });
-  };
+ 
+    const handleSelectUserChange = (selectedOption) => {
+      console.log(selectedOption)
+     form.setValues({ ...form.values, user_id: selectedOption });
+    };
   const fileupload = async (e) => {
     // form.setValues({ ...form.values, profile_image: e.name });
     const formData = new FormData();
@@ -172,7 +184,7 @@ export function AddEditDocument(props) {
                 form.setValues({ ...form.values, name: e.target.value })
               }
             />
-            <SimpleGrid cols={2} breakpoints={[{ maxWidth: "sm", cols: 1 }]}>
+           
               <Select
                 placeholder="Pick"
                 label="Client"
@@ -187,21 +199,11 @@ export function AddEditDocument(props) {
                 dropdownPosition="bottom"
                 color="#DEE2E6"
               />
-              <DateInput
-                placeholder="Current date"
-                label="Created Date"
-                withAsterisk
-                w="100%"
-                position="bottom"
-                labelProps={{ display: "flex" }}
-                mt="sm"
-                color="#DEE2E6"
-             
-              />
-            </SimpleGrid>
-            <div></div>
+          
+            
+          
 
-            <MultiSelect
+            {/* <MultiSelect
               label="Service"
               placeholder="Pick"
               searchable
@@ -215,8 +217,22 @@ export function AddEditDocument(props) {
               labelProps={{ display: "flex" }}
               required
               dropdownPosition="bottom"
+            /> */}
+            <MultiSelect
+              label="User"
+              placeholder="Pick"
+              searchable
+              nothingFound="No options"
+              data={Edata}
+              onChange={handleSelectUserChange}
+              value={form.values.user}
+              w="100%"
+              color="#DEE2E6"
+              mt="sm"
+              labelProps={{ display: "flex" }}
+              required
+              dropdownPosition="bottom"
             />
-
             <FileInput
               type="file"
               label="Document"

@@ -23,7 +23,7 @@ export async function creatClientController(req, res) {
 export async function getClientController(req, res) {
   const id = req.params.id;
   const firm_id = req.user.data.firm_id;
- 
+  
   const result = await getClientService(id,firm_id);
   if (result == null || result == undefined)
     return res
@@ -36,7 +36,7 @@ export async function getClientController(req, res) {
 //Get All Clients
 export async function getAllClientController(req, res) {
   const query = req.query;
-    const firm_id = req.user.data.firm_id;
+  const firm_id = req.user.data.firm_id;
   const data = await queryBuilder(query);
   
   const result = await getAllClientService(data,firm_id);

@@ -76,20 +76,13 @@ export function ClientTable() {
         )}
         <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
+           
             <Text fz="sm" fw={500}>
               {data?.name}
             </Text>
           </Group>
         </td>
-        <td>
-          <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
-            <Text fz="sm" fw={500}>
-              {data?.service[0]?.name}
-            </Text>
-          </Group>
-        </td>
+    
         <td>
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
@@ -98,14 +91,14 @@ export function ClientTable() {
             </Text>
           </Group>
         </td>
-        <td>
+        {/* <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
+         
             <Text fz="sm" fw={500}>
               {data?.service[0]?.status}
             </Text>
           </Group>
-        </td>
+        </td> */}
         <td>
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
@@ -116,7 +109,7 @@ export function ClientTable() {
         </td>
         <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
+          
             <Text fz="sm" fw={500} c="dimmed">
               {data?.email}
             </Text>
@@ -124,7 +117,7 @@ export function ClientTable() {
         </td>
         <td>
           <Group spacing="sm">
-            {/* <Avatar size={30}  radius={30} /> */}
+        
             <Text fz="sm" fw={500} c="dimmed">
               {data?.phone}
             </Text>
@@ -243,11 +236,8 @@ export function ClientTable() {
                     </ActionIcon>
                   </th>
                 )}
-
                 <th>NAME</th>
-                <th>SERVICE</th>
                 <th>PAYMENT</th>
-                <th>SERVICE STATUS</th>
                 <th>COMPUNY NAME</th>
                 <th>Email</th>
                 <th>phone</th>

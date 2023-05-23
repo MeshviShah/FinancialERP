@@ -23,11 +23,11 @@ export async function deleteTenderService(id) {
   return result;
 }
 export async function countTenderService() {
-  const result = await task.aggregate([
+  const result = await tender.aggregate([
    
     {
       $count: "totalCount",
     },
   ]);
-  return result?.[0].totalCount;
+  return result?.[0]?.totalCount;
 }

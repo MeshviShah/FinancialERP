@@ -6,6 +6,11 @@ export const register = (body) => async (dispatch) => {
   await axio
     .post("/register", body)
     .then((response) => {
+         notifications.show({
+           title: "Success",
+           message: "Succesffuly Registerd",
+           autoClose: 8000,
+         });
       dispatch(registerSuccess(response?.data));
     })
     .catch((err) => {

@@ -13,7 +13,7 @@ const RoleRouter = Router();
 
 //Role Router
 RoleRouter.post("/", roleValidator, creatRoleController); //Creat Role
-RoleRouter.get("/:id",auth , getRoleController); //Get Role By Id
+RoleRouter.get("/:id", getRoleController); //Get Role By Id
 RoleRouter.get("/", getAllRoleController); //Get All Roles
 RoleRouter.put("/:id", updateRoleController); //Update Role By Id
 RoleRouter.delete("/:id", deleteRoleController); //Delete Role By Id

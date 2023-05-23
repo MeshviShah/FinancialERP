@@ -17,7 +17,7 @@ export async function creatTenderController(req, res) {
   const id = req.user;
   const result = await CreatTenderService(data);
   const admin=await getUserService(id);
-  console.log(admin?.[0].email,"admin")
+  //console.log(admin?.[0].email,"admin")
   //const sendEmail =await sendTenderMail({email : admin?.[0].email})
   return res
     .status(200)

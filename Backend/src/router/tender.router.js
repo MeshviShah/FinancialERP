@@ -12,7 +12,7 @@ import { auth } from "../middleware/auth.js";
 const TenderRouter = Router();
 
 //Tender Router
-TenderRouter.post("/",auth, creatTenderController); //Creat Tender
+TenderRouter.post("/", creatTenderController); //Creat Tender
 TenderRouter.get("/count", countTenderController);
 TenderRouter.get("/:id", getTenderController); //Get Tender By Id
 TenderRouter.get("/", getAllTenderController); //Get All Tenders

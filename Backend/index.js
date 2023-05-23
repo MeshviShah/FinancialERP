@@ -9,6 +9,7 @@ import { router } from "./src/router/index.js";
 import { errorHandler } from "./src/helper/errorhandle.js";
 import { sendMail } from "./src/helper/sendMail.helper.js";
 import { upload, uploadImage } from "./src/utils/uploadImage.js";
+
 app.listen(process.env.PORT, () => {
   console.log(`Application is listening at port ${process.env.PORT}`);
 });
@@ -19,8 +20,10 @@ app.use(_json());
 app.use(bodyParser.json());
 
 router(app);
-app.use(errorHandler);
-app.use('/public',express.static("public"));
-// sendMail({email:"190770107620@socet.edu.in"});
+app.use("/public", express.static("public"));
 app.post("/upload", upload.single("file"), uploadImage);
+app.use(errorHandler);
+
+// sendMail({email:"190770107620@socet.edu.in"});
+
 export { app };

@@ -8,12 +8,12 @@ import {
 } from "../service/document.service.js";
 import { resType } from "../response/res.types.js";
 import { Types } from "mongoose";
+import { getRoleService } from "../service/Role.service.js";
 const { ObjectId } = Types;
 // --->>Creat Document
 export async function creatDocumentController(req, res) {
-  const data = req.body;
-   const userId = req.user.data.id;
-  const result = await CreatDocumentService({...data, user_id:userId});
+    const data = { ...req.body, created_at: new Date() };
+  const result = await CreatDocumentService(data);
   return res
     .status(200)
     .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
@@ -38,7 +38,14 @@ export async function getDocumentController(req, res) {
 }
 //Get All Documents
 export async function getAllDocumentController(req, res) {
-  const result = await getAllDocumentService();
+  const id=req.user.data.id
+  const firm_id = req.user.data.firm_id;
+  const role_id = req.user.data.role_id;
+   const role = await getRoleService(role_id);
+   
+   const role_name = role.name;
+   const data={}
+  const result = await getAllDocumentService(data,id,firm_id,role_name);
   if (result == null || result == undefined || result.length <= 0)
     return res
       .status(404)

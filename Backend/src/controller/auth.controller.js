@@ -50,11 +50,12 @@ export async function registerController(req, res) {
 export async function loginController(req, res) {
   const { email, password } = req.body;
   const data = await getUserByEmailService({ email });
+  console.log(data,"data")
   if (!data) return res
     .status(401)
     .json({ res: resType.WRONG_CREDENTIAL, statusCode: 401 });
   const hash = data?.[0]?.password;
-  console.log(data,"fff")
+  //console.log(data,"fff")
   const result = await passwordBcrypt(password, hash);
   if (!result) return res
     .status(401)
@@ -63,7 +64,7 @@ export async function loginController(req, res) {
     email: email,
     role_id: data?.[0].role_id,
     firm_id: data?.[0].firm_id,
-    id: data[0].id,
+    id: data?.[0]._id,
   };
   const etext = await encrypt(obj);
 
@@ -82,6 +83,7 @@ export async function loginController(req, res) {
 export async function forgetPasswordController(req, res) {
   const result = req.body;
   const data = await getUserByEmailService({ email: result.email });
+
   if (!data) return res.status(404).json({ response: resType.DATANOTAVAIABLE });
   const obj = {
     email: data.email,

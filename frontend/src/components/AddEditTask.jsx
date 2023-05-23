@@ -75,7 +75,7 @@ export function AddEditTask(props) {
 
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    //e.preventDefault();
 
     if (mode === "add") {
       dispatch(addTask(formData)).then(() => {
@@ -97,7 +97,7 @@ export function AddEditTask(props) {
   } else {
     data = []        
   }
- console.log(data)
+ //console.log(data)
   if (clients?.client?.data) {
     var clientdata = clients?.client?.data?.map((data) => ({
       label: data?.name,
@@ -190,7 +190,7 @@ export function AddEditTask(props) {
                 setFormData({ ...formData, task_status: e.target.value })
               }
             />
-            <Button fullWidth mt="xl" w="20%" radius="md" type="submit">
+            <Button fullWidth mt="xl" w="30%" radius="md" type="submit">
               {mode === "add" ? "Add Task" : "Update Task"}
             </Button>
           </form>

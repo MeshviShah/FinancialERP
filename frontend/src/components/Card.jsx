@@ -3,16 +3,22 @@ import { Grid, rem, SimpleGrid } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useRef } from "react";
 import { clientCount } from "../redux/action/client.action";
+import { documentCount } from "../redux/action/document.action";
+import { employeeCount } from "../redux/action/employee.action";
+import { tenderCount } from "../redux/action/tender.action";
 export function TaskCard() {
    const dispatch = useDispatch();
    useEffect(() => {
-   
      dispatch(clientCount());
-     
+     dispatch(employeeCount())
+     dispatch(tenderCount())
    }, []);
    
-   const clients = useSelector((state) => state?.clientData?.client); 
-  return (
+   const clients = useSelector((state) => state?.clientData?.client?.data); 
+   const employees = useSelector((state) => state?.employeeData?.employee?.data); 
+   const tender = useSelector((state)=>state?.tender?.tender?.data)
+   console.log(tender,"tender")
+   return (
     <>
       <SimpleGrid cols={3}>
         <div>
@@ -22,7 +28,7 @@ export function TaskCard() {
             </Text>
 
             <Text mt="xs" color="dimmed" size="sm">
-              10
+              {employees|| 0}
             </Text>
           </Card>
         </div>
@@ -33,7 +39,7 @@ export function TaskCard() {
             </Text>
 
             <Text mt="xs" color="dimmed" size="sm">
-              {clients?.data}
+              {clients || 0}
             </Text>
           </Card>
         </div>
@@ -74,7 +80,7 @@ export function TaskCard() {
             </Text>
 
             <Text mt="xs" color="dimmed" size="sm">
-              10
+              {tender}
             </Text>
           </Card>
         </div>

@@ -5,6 +5,7 @@ import {
   updateUserService,
   deleteUserService,
   countUserService,
+  getMyDataService,
 } from "../service/user.service.js";
 import { resType } from "../response/res.types.js";
 import { queryBuilder } from "../utils/queryBuilder.js";
@@ -26,36 +27,45 @@ export async function creatUserController(req, res) {
 export async function getUserController(req, res) {
   const id = req.params.id;
   const firm_id = req.user.data.firm_id;
- 
-  const result = await getUserService(id,firm_id);
-  if (result.length <= 0)
-    return res
-      .status(404)
-      .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+ try{
+const result = await getUserService(id, firm_id);
+if (result.length <= 0)
   return res
-    .status(200)
-    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+    .status(404)
+    .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+return res
+  .status(200)
+  .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+ }catch(error){
+return res.status(500).json({ message: err.message, statusCode: 500 });
+ }
 }
 //get All Users
 export async function getAllUserController(req, res) {
   const query = req.query;
   const data = await queryBuilder(query);
   //console.log(data);
-  const firm_id = req.user.data.firm_id;
-  const result = await getAllUserService(data,firm_id);
-  if (result == null || result == undefined || result.length <= 0)
-    return res
-      .status(404)
-      .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
-  return res
-    .status(200)
-    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  try{
+ const firm_id = req.user.data.firm_id;
+ const result = await getAllUserService(data, firm_id);
+ if (result == null || result == undefined || result.length <= 0)
+   return res
+     .status(404)
+     .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+ return res
+   .status(200)
+   .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  }catch(error){
+return res.status(500).json({ message: err.message, statusCode: 500 });
+  }
+ 
 }
 //Update User By Id
 export async function updateUserController(req, res) {
   const data = req.body;
   const id = req.params.id;
-  if (!ObjectId.isValid(id)) {
+  try {
+     if (!ObjectId.isValid(id)) {
     return res
       .status(404)
       .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
@@ -69,36 +79,47 @@ export async function updateUserController(req, res) {
     .status(200)
     .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
 }
+   catch (error) {
+    return res.status(500).json({ message: err.message, statusCode: 500 });
+  }
+}
 //Delete User By Id
 export async function deleteUserController(req, res) {
   const id = req.body;
- const result = await deleteUserService(id);
-  if (result == null || result == undefined || result.length <= 0)
+  try {
+    const result = await deleteUserService(id);
+    if (result == null || result == undefined || result.length <= 0)
+      return res
+        .status(404)
+        .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
     return res
-      .status(404)
-      .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
-  return res
-    .status(200)
-    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+      .status(200)
+      .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  } catch (error) {
+    return res.status(500).json({ message: err.message, statusCode: 500 });
+  }
 }
-
-
-
-
 
 
 export async function getUserByIdController(req, res) {
   const id = req.user.data.id;
-  console.log(req.user)
-  console.log(id)
-  const result = await getUserService(id);
-  if (result == null || result == undefined || result.length <= 0)
-    return res
-      .status(404)
-      .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
-  return res
-    .status(200)
-    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  const firm_id = req.user.data.firm_id;
+  // console.log(req.user)
+  // console.log(id)
+  try {
+     const result = await getMyDataService(id, firm_id);
+     console.log(result);
+     if (result == null || result == undefined || result.length <= 0)
+       return res
+         .status(404)
+         .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
+     return res
+       .status(200)
+       .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  } catch (error) {
+    return res.status(500).json({ message: err.message, statusCode: 500 });
+  }
+ 
 }
 
 export async function countUserController(req, res) {

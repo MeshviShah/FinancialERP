@@ -34,7 +34,7 @@ export function AddEmployee(props) {
       name: "",
       email: "",
       phone: "",
-      role: "",
+      role_id: "",
       profile_image: "",
       password: "",
       department:"",
@@ -43,6 +43,7 @@ export function AddEmployee(props) {
   const [mode, setMode] = useState("add");
   const [imageUrl, setImageUrl] = useState(null);
   const { employee } = useSelector((state) => state.employeeData);
+  console.log(employee,"emp")
   const { image } = useSelector((state) => state.image);
   //image && form.setValues({ ...form.values, profile_image: image.data.filename });
   const roless = useSelector((state) => state.role);
@@ -70,7 +71,7 @@ export function AddEmployee(props) {
         name: employee.data?.[0]?.name || "",
         email: employee.data?.[0]?.email || "",
         phone: employee.data?.[0]?.phone || "",
-        role: employee.data?.[0]?.role?.[0]?._id || "",
+        role_id: employee.data?.[0]?.role?.[0]?._id || "",
         profile_image: employee.data?.[0]?.profile_image || "",
         department:employee.data?.[0]?.department || "",
       });
@@ -106,7 +107,7 @@ export function AddEmployee(props) {
   };
   const handleSelectChange = (selectedOption) => {
     console.log("Selected ID:", selectedOption);
-    form.setValues({ ...form.values, role: selectedOption });
+    form.setValues({ ...form.values, role_id: selectedOption });
   };
   const fileupload = async (e) => {
     const file = e.target.files[0];

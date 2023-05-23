@@ -74,9 +74,11 @@ const useStyles = createStyles((theme) => ({
 export function NavbarCom() {
   const { classes, cx } = useStyles();
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
   const handleLogOut = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userInfo");
+    
 
     navigate("/login");
   };
@@ -105,10 +107,13 @@ export function NavbarCom() {
           <IconFileText className={classes.linkIcon} stroke={1.5} />
           <span>Document</span>
         </a>
-        <a className={cx(classes.link)} href="/home/employee">
-          <IconUserCircle className={classes.linkIcon} stroke={1.5} />
-          <span>Employee</span>
-        </a>
+        {role === "admin" && (
+          <a className={cx(classes.link)} href="/home/employee">
+            <IconUserCircle className={classes.linkIcon} stroke={1.5} />
+            <span>User</span>
+          </a>
+        )}
+
         <a className={cx(classes.link)} href="/home/task">
           <IconChecklist className={classes.linkIcon} stroke={1.5} />
           <span>Task</span>

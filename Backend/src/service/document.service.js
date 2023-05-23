@@ -1,9 +1,11 @@
 import { document } from "../models/document.model.js";
 import { Types } from "mongoose";
 import { profileImage } from "../utils/image.utils.js";
+import { getAllClientService } from "./client.service.js";
 const { ObjectId } = Types;
 
 export async function CreatDocumentService(data) {
+  console.log(data)
   const result = await document.create(data); //Creat Document Query
   return result;
 }
@@ -50,22 +52,51 @@ export async function getDocumentService(id) {
   ]); //Get Document By Id Query
   return result;
 }
-export async function getAllDocumentService() {
+export async function getAllDocumentService(data,id,firm_id,role_name) {
+   let matchStage = {}
+   if (role_name !== "admin") {
+     matchStage = {
+       ...matchStage,
+       user_id: new ObjectId(id),
+     };
+   }
+   if (role_name == "admin") {
+     const employee = await getAllClientService(
+       data = {
+         search: "",
+         order: "",
+         sortField: "",
+         filterField: "",
+         filterValue: "",
+         offset: NaN,
+         limit: NaN,
+       },
+       firm_id
+     );
+     //console.log(employee)
+     const ids = employee.map((item) => item._id);
+     //console.log(ids)
+     matchStage = {
+       ...matchStage,
+       client_id: { $in: ids.map((id) => new ObjectId(id)) },
+     };
+   }
   const result = await document.aggregate([
+    { $match: matchStage },
     {
       $lookup: {
         from: "clients",
-        localField: "client",
+        localField: "client_id",
         foreignField: "_id",
         as: "client",
       },
     },
     {
       $lookup: {
-        from: "services",
-        localField: "service",
+        from: "users",
+        localField: "user_id",
         foreignField: "_id",
-        as: "service",
+        as: "user",
       },
     },
   ]); //Get All Document Query
@@ -99,11 +130,11 @@ export async function deleteDocumentService(ids) {
 
 export async function countDocumentService(firm_id) {
   const result = await document.aggregate([
-    {
-      $match: {
-        firm_id: { $eq: new ObjectId(firm_id) },
-      },
-    },
+    // {
+    //   $match: {
+    //     firm_id: { $eq: new ObjectId(firm_id) },
+    //   },
+    // },
     {
       $count: "totalCount",
     },

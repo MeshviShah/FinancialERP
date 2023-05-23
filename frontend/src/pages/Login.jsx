@@ -50,7 +50,7 @@ export function Login() {
 
   useEffect(() => {
     const token = logins.accessToken;
-    const role = logins.login?.data?.[0].role?.[0].name;
+    const role = logins.login?.data?.[0].role?.[0]?.name;
     role && localStorage.setItem("role", role);
     if (token) {
       const existingAccessToken = localStorage.getItem("accessToken");

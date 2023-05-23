@@ -18,11 +18,7 @@ export async function getUserService(id,firm_id) {
   //Get USer By Id Query
 
   const result = await user.aggregate([
-    {
-      $match: {
-        firm_id: { $eq:new ObjectId(firm_id)}, 
-      },
-    },
+    
     {
       $match: {
         _id: new ObjectId(id),
@@ -76,8 +72,8 @@ export async function getAllUserService(data,firm_id) {
       $match: {
         $or: [
           { name: { $regex: data.search, $options: "i" } },
-          { email: { $regex: data.search, $options: "i" } },
-          { role: { $regex: data.search, $options: "i" } },
+          // { email: { $regex: data.search, $options: "i" } },
+          
         ],
       },
     },
@@ -175,15 +171,67 @@ export async function getUserByName({ name }) {
 
 
 export async function countUserService(firm_id) {
-  const result = await user.aggregate([
+  const result = await user
+  .aggregate([
     {
       $match: {
-        firm_id: { $eq: new ObjectId(firm_id) },
+        firm_id:firm_id,
       },
     },
     {
       $count: "totalCount",
     },
   ]);
-  return result?.[0].totalCount;
+    return result?.[0]?.totalCount;
+}
+
+
+export async function getMyDataService(id, firm_id) {
+  //Get USer By Id Query
+  const result = await user.aggregate([
+    {
+      $match: {
+        firm_id: firm_id },
+      
+    },
+    {
+      $match: {
+        _id: new ObjectId(id),
+      },
+    },
+
+    {
+      $lookup: {
+        from: "firms",
+        localField: "firm_id",
+        foreignField: "_id",
+        as: "firm",
+      },
+    },
+    {
+      $lookup: {
+        from: "roles",
+        localField: "role_id",
+        foreignField: "_id",
+        as: "role",
+      },
+    },
+  ]);
+
+  return result.map((u) => {
+    const { profile_image, password, ...rest } = u;
+
+    if (profile_image) {
+      const image = profileImage(profile_image);
+      const updatedUser = {
+        ...rest,
+        profile_image: image,
+      };
+
+      return updatedUser;
+    } else {
+      const userWithoutPassword = { ...rest };
+      return userWithoutPassword;
+    }
+  });
 }

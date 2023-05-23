@@ -141,6 +141,7 @@ export async function getPaymentClientService(data) {
 
 
 export async function countClientService(firm_id) {
+
   const result = await client
     .aggregate([
       {
@@ -153,5 +154,5 @@ export async function countClientService(firm_id) {
       },
     ])
     ;
-  return result?.[0].totalCount;
+  return result?.[0]?.totalCount;
 }
