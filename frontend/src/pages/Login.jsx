@@ -13,7 +13,7 @@ import {
   Group,
   Button,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm, isEmail } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { login } from "../redux/action/login.action";
 export function Login() {
@@ -28,15 +28,12 @@ export function Login() {
     initialValues: {
       email: "",
       password: "",
-    
     },
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      email: isEmail("Invalid email"),
       password: (value) =>
         value.length === 0 ? "Please enter the password" : null,
-     
-    
-      },
+    },
   });
   const onSubmit = (values) => {
     dispatch(login(values));

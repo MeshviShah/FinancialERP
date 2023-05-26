@@ -34,8 +34,8 @@ export const getOneClient = (id) => async (dispatch) => {
 export const addClient = (body) => async (dispatch) => {
   await axio
     .post("/client", body)
-    .then((response) => {
-      dispatch(addClientSuccess(response.data));
+    .then(() => {
+      return true
     })
     .catch((err) => {
       return dispatch(hasError(err.response?.data));

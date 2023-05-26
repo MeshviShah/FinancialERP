@@ -14,7 +14,7 @@ export function TaskCard() {
      dispatch(tenderCount())
    }, []);
    
-   const clients = useSelector((state) => state?.clientData?.client?.data); 
+   const clients = useSelector((state) => state?.clientData); 
    const employees = useSelector((state) => state?.employeeData?.employee?.data); 
    const tender = useSelector((state)=>state?.tender?.tender?.data)
    console.log(tender,"tender")
@@ -28,7 +28,7 @@ export function TaskCard() {
             </Text>
 
             <Text mt="xs" color="dimmed" size="sm">
-              {employees|| 0}
+              8
             </Text>
           </Card>
         </div>
@@ -39,7 +39,7 @@ export function TaskCard() {
             </Text>
 
             <Text mt="xs" color="dimmed" size="sm">
-              {clients || 0}
+              7
             </Text>
           </Card>
         </div>
@@ -80,7 +80,7 @@ export function TaskCard() {
             </Text>
 
             <Text mt="xs" color="dimmed" size="sm">
-              {tender}
+              8
             </Text>
           </Card>
         </div>

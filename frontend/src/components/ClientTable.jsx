@@ -62,8 +62,8 @@ export function ClientTable() {
    };
   const theme = useMantineTheme();
 
-  if (clients && clients.client && clients.client.data) {
-    var row = clients.client.data.map((data) => (
+  if (clients && clients.clients && clients.clients.data) {
+    var row = clients.clients.data.map((data) => (
       <tr key={data._id}>
         {role === "admin" && (
           <td>
@@ -223,7 +223,7 @@ export function ClientTable() {
           >
             <thead>
               <tr>
-                {role === "admin" && (
+                {role === "admin" && selection.length >= 1 ? (
                   <th>
                     <ActionIcon color="black">
                       <IconTrash
@@ -235,6 +235,8 @@ export function ClientTable() {
                       />
                     </ActionIcon>
                   </th>
+                ) : (
+                  <th></th>
                 )}
                 <th>NAME</th>
                 <th>PAYMENT</th>

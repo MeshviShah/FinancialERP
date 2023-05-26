@@ -35,17 +35,20 @@ export const getOneEmployee = (id) => async (dispatch) => {
     });
 };
 export const addEmployee = (body) => async (dispatch) => {
-  console.log(body,"body")
+  //console.log(body,"body")
   await axio
     .post("/user", body)
     .then((response) => {
-      dispatch(addemployeeSuccess(response.data));
+      //dispatch(addemployeeSuccess(response.data));
+      return true
+      
     })
     .catch((err) => {
       return dispatch(hasError(err.response?.data));
     });
 };
 export const updateEmployee = (id, body) => async (dispatch) => {
+   console.log(body, "body");
   await axio
     .put("/user/" + id, body)
     .then((response) => {

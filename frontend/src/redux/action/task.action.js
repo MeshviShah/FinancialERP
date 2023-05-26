@@ -24,14 +24,8 @@ export const tasks = (query) => async (dispatch) => {
 export const addTask = (body) => async (dispatch) => {
   await axio
     .post("/task", body)
-    .then((response) => {
-       const message = response?.data.res;
-        notifications.show({
-          title: message,
-          message: "Successfully Added Task",
-          autoClose: 8000,
-        });
-      dispatch(addTaskSuccess(response.data));
+    .then(() => {
+      return true
     })
     .catch((err) => {
       const message = err.response?.data.res;

@@ -38,14 +38,11 @@ export function EmployeeTable() {
         ? current.filter((item) => item !== id)
         : [...current, id]
     );
-
   const theme = useMantineTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const employees = useSelector((state) => state.employeeData);
-  // console.log(employees,"j")
+  const user = useSelector((state) => state.employeeData);
   const searchInputRef = useRef(null);
-  //const filterInputRef = useRef(null);
 const role = localStorage.getItem("role");
 
   useEffect(() => {
@@ -63,11 +60,15 @@ const role = localStorage.getItem("role");
   };
   
   const handleDeleteAll = async () => {
+   
     selection && dispatch(deleteEmployee(selection));
     window.location.reload();
+   
   };
-  if (employees && employees.employee && employees.employee.data) {
-    var row = employees.employee.data.map((data) => (
+  const emp = user.employees;
+
+  if (user && user.employees && user.employees.data) {
+    var row = emp.data.map((data) => (
       <tr key={data._id}>
       {
         role==="admin" &&
@@ -233,7 +234,7 @@ const role = localStorage.getItem("role");
           >
             <thead>
               <tr>
-                {role === "admin" && (
+                {role === "admin" && selection.length>=1 ? (
                   <th>
                     <ActionIcon color="black">
                       <IconTrash
@@ -245,7 +246,7 @@ const role = localStorage.getItem("role");
                       />
                     </ActionIcon>
                   </th>
-                )}
+                ) : <th></th>}
                
 
                 <th>profile Image</th>
@@ -258,7 +259,7 @@ const role = localStorage.getItem("role");
               </tr>
             </thead>
             <tbody>
-              {employees.status === 404 ? (
+              {user.status === 404 ? (
                 <tr>
                 
                    <td>No data</td> 

@@ -5,11 +5,11 @@ export const Taskslice = createSlice({
   initialState: {
     task: [],
     //isLodding: false,
-    tasks: {},
+    tasks: [],
   },
   reducers: {
     taskDatasSuccess: (state, action) => {
-      state.task = action.payload;
+      state.tasks = action.payload;
       state.message = action.payload?.res;
       state.status = action.payload?.status;
       //state.isLodding = false;
@@ -19,11 +19,7 @@ export const Taskslice = createSlice({
       state.message = action.payload?.res;
       state.error = action.payload?.error;
     },
-    addTaskSuccess: (state, action) => {
-      state.task = action.payload;
-      state.message = action.payload?.res;
-      state.status = action.payload?.statusCode;
-    },
+  
     getTaskSuccess: (state, action) => {
       state.task = action.payload;
       state.message = action.payload?.res;

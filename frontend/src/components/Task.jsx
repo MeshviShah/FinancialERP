@@ -42,6 +42,7 @@ export function TaskTable() {
   const navigate = useNavigate();
  const format = "YYYY-MM-DD";
   const task = useSelector((state) => state.task);
+  console.log(task,"task")
     const searchInputRef = useRef(null);
   const role = localStorage.getItem("role");
   useEffect(() => {
@@ -62,8 +63,8 @@ export function TaskTable() {
    selection && dispatch(deleteTask(selection));
    window.location.reload();
  };
-  if (task && task.task && task.task.data) {
-    var row = task.task.data.map((data) => (
+  if (task && task.tasks && task.tasks.data) {
+    var row = task.tasks.data.map((data) => (
       <tr key={data._id}>
         {role === "admin" && (
           <td>
@@ -213,7 +214,7 @@ export function TaskTable() {
           >
             <thead>
               <tr>
-                {role === "admin" && (
+                {role === "admin" && selection.length >= 1 ? (
                   <th>
                     <ActionIcon color="black">
                       <IconTrash
@@ -225,6 +226,8 @@ export function TaskTable() {
                       />
                     </ActionIcon>
                   </th>
+                ) : (
+                  <th></th>
                 )}
                 <th>NAME</th>
                 <th>STATUS</th>
@@ -239,7 +242,7 @@ export function TaskTable() {
               {task.status === 404 ? (
                 <tr>
                   {" "}
-                  <td /> <td /> <td>No data</td> <td /> 
+                  <td /> <td /> <td>No data</td> <td />
                   <td />{" "}
                 </tr>
               ) : (

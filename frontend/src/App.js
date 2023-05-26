@@ -47,11 +47,11 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route
+              path="/reset-token/:token"
+              element={<ResetPassword />}
+            />
             <Route exact path="/" element={<PrivateRoute />}>
-              <Route
-                path="/reset-token/:token"
-                element={<ResetPassword />}
-              ></Route>
               <Route path="/home" element={<Home />}>
                 <Route path="/home" element={<TaskCard />} />
                 <Route path="/home/client" element={<ClientTable />} />

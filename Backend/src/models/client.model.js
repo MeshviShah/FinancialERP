@@ -30,7 +30,7 @@ const clientSchema = new mongoose.Schema({
   website: {
     type: String,
   },
-  compuny_name: {
+  company_name: {
     type: String,
   },
   payment: {

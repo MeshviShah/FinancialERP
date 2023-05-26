@@ -5,11 +5,12 @@ export const employeeDataslice = createSlice({
   initialState: {
     employee: [],
     isLodding: false,
-    employees: {},
+    employees: [],
+    mydata:[]
   },
   reducers: {
     employeeDataSuccess: (state, action) => {
-      state.employee = action.payload;
+      state.employees = action.payload;
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
       state.isLodding = true;
@@ -30,7 +31,7 @@ export const employeeDataslice = createSlice({
       state.status = action.payload?.statusCode;
     },
     getOwnDataSuccess: (state, action) => {
-      state.employee = action.payload;
+      state.mydata = action.payload;
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
     },

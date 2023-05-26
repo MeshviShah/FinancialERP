@@ -15,7 +15,7 @@ import {
   Notification,
 } from "@mantine/core";
 import { IconCamera, IconCheck, IconX } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { useForm, isEmail } from "@mantine/form";
 import { register } from "../redux/action/register.action";
 import { imageUpload } from "../redux/action/imageUpload.action";
 import { roles } from "../redux/action/role.action";
@@ -33,9 +33,7 @@ export function Register() {
   const [imageUrl, setImageUrl] = useState(null);
   const { image } = useSelector((state) => state.image);
   
-  const nextStep = () => {
-    setActive((current) => (current < 3 ? current + 1 : current));
-  };
+ 
 
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
@@ -53,16 +51,25 @@ export function Register() {
       profile_image: "",
       firm_email: "",
       firm_address: "",
-      role_id : "",
+      role_id: "",
     },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) =>
-        value.length === 0 ? "Please enter the password" : null,
-      confirmPassword: (value, values) =>
-        value !== values.password ? "Passwords did not match" : null,
+    validationRules: {
+      name: [{ required: true, error: "Name is required" }],
+      password: [
+        { required: true, error: "Password is required" },
+        { minLength: 6, error: "Password must be at least 6 characters long" },
+      ],
+      confirmPassword: [
+        { required: true, error: "Confirm Password is required" },
+        { equalsField: "password", error: "Passwords do not match" },
+      ],
     },
   });
+   const nextStep = () => {
+      if (form.isValid()) {
+        setActive((prevActive) => prevActive + 1);
+      }
+  }
   const onSubmit = async (values) => {
    
     await dispatch(

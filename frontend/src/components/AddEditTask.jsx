@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+                                                                                                import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
@@ -10,7 +10,8 @@ import {
   Select,
   MultiSelect,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm,isNotEmpty } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
 import {
   addTask,
   getOneTask,
@@ -19,26 +20,16 @@ import {
 import { employee } from "../redux/action/employee.action.js";
 import { notifications } from "@mantine/notifications";
 import { client } from "../redux/action/client.action";
+
 export function AddEditTask(props) {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const form = useForm();
+  const navigate = useNavigate();
   const task = useSelector((state) => state.task);
 
+  const user = useSelector((state) => state.employeeData);
+  
 
-  useEffect(() => {
-    const statusCode = task.status;
-    const message = task.message
-    // if (statusCode === 200) {
-    //     notifications.show({
-    //       title: message
-    //     })
-    // }
-  }, [task, dispatch]);
-  const employees = useSelector((state) => state.employeeData);
-  // if(task && task.task && task.task.data){
-  //    console.log(task.task.data);
-  // }
    const clients = useSelector((state) => state.clientData);
   useEffect(() => {
     dispatch(employee());
@@ -47,14 +38,26 @@ export function AddEditTask(props) {
     dispatch(client())
   },[dispatch])
   const [mode, setMode] = useState("add");
-
-  const [formData, setFormData] = useState({
+const form = useForm({
+  initialValues: {
     name: "",
     user_id: [],
     task_status: "",
-    client: ""
- 
-  });
+    client_id: "",
+  },
+  validate: {
+  
+    user_id: isNotEmpty("Select User"),
+    client_id: isNotEmpty("Select Client"),
+    //   value.length < 3 ? "Password must have at least 3 letters" : null,
+  },
+});
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   user_id: [],
+  //   task_status: "",
+  //   client_id: ""
+  // });
 
   useEffect(() => {
     if (id) {
@@ -62,35 +65,41 @@ export function AddEditTask(props) {
       dispatch(getOneTask(id));
     }
   }, []);
+  
   useEffect(() => {
     if (task && mode === "edit"){
-      
-      setFormData({
+   
+      const userIDs =
+        task?.task?.data?.[0]?.user?.map((user) => user?._id) || [];
+      form.setValues({
         name: task?.task?.data?.[0]?.name || "",
-        user_id: task?.task?.data?.[0]?.user?.[0]?._id || "",   
+        user_id: userIDs || "",
+        client_id: task?.task?.data?.[0]?.client?.[0]?._id || "",
         task_status: task?.task?.data?.[0]?.task_status || "",
       });
     }
   }, [task, mode]);
 
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (values) => {
     //e.preventDefault();
 
     if (mode === "add") {
-      dispatch(addTask(formData)).then(() => {
+      dispatch(addTask(values)).then(() => {
         form.reset();
+        navigate("/home/task");
       });;
 
     }
     else {
-      await dispatch(updateTask(id, formData)).then(() => {
+      await dispatch(updateTask(id, values)).then(() => {
         form.reset();
+        navigate("/home/task");
       });;
     }
   };
-  if (employees?.employee?.data) {
-    var data = employees?.employee?.data?.map((data) => ({
+  if (user?.employees?.data) {
+    var data = user?.employees?.data?.map((data) => ({
       label: data?.name,
       value: data?._id,
     }));
@@ -106,18 +115,18 @@ export function AddEditTask(props) {
   } else {
     clientdata = [];
   }
-  // const [selectedId, setSelectedId] = useState("");
+
   const handleSelectChange = (selectedOption) => {
-      setFormData({ ...formData, user_id: selectedOption });
+      form.setValues({ ...form.values, user_id: selectedOption });
   };
    const handleSelectClient = (selectedOption) => {
-     setFormData({ ...formData, client: selectedOption });
+    form.setValues({ ...form.values, client_id: selectedOption });
    };
   return (
     <div>
       {/* <Group>
         <h2 align="left" fw="md" fz="xs"></h2>
-      </Group> */}
+      </Group>  */}
 
       <ScrollArea>
         {" "}
@@ -130,7 +139,7 @@ export function AddEditTask(props) {
           w="50%"
           style={{ backgroundColor: "#F1F3F5" }}
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
             <h3 align="left" fw="md" fz="xs">
               {mode === "edit" ? "Task Edit" : "Task Add"}
             </h3>
@@ -142,16 +151,16 @@ export function AddEditTask(props) {
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
               w="100%"
-              value={formData.name}
+              value={form.values.name}
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                form.setValues({ ...form.values, name: e.target.value })
               }
             />
             <Select
               placeholder="Pick"
               label="Client"
               data={clientdata}
-              value={form.values.client}
+              value={form.values.client_id}
               onChange={handleSelectClient}
               nothingFound="No options"
               w="100%"
@@ -160,6 +169,7 @@ export function AddEditTask(props) {
               labelProps={{ display: "flex" }}
               required
               dropdownPosition="bottom"
+              {...form.getInputProps("client_id")}
             />
 
             <MultiSelect
@@ -169,13 +179,14 @@ export function AddEditTask(props) {
               nothingFound="No options"
               data={data}
               onChange={handleSelectChange}
-              value={form.values.user}
+              value={form.values.user_id}
               w="100%"
               color="#DEE2E6"
               mt="sm"
               labelProps={{ display: "flex" }}
               required
               dropdownPosition="bottom"
+              {...form.getInputProps("user_id")}
             />
             <TextInput
               label="Task Status"
@@ -185,9 +196,9 @@ export function AddEditTask(props) {
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
               w="100%"
-              value={formData.task_status}
+              value={form.values.task_status}
               onChange={(e) =>
-                setFormData({ ...formData, task_status: e.target.value })
+                form.setValues({ ...form.values, task_status: e.target.value })
               }
             />
             <Button fullWidth mt="xl" w="30%" radius="md" type="submit">

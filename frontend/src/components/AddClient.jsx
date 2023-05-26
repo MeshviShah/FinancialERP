@@ -12,7 +12,8 @@ import {
   Checkbox,
   Select,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm, isEmail } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
 import {
   addClient,
   getOneClient,
@@ -22,20 +23,27 @@ import {
 export function AddClient(props) {
   const dispatch = useDispatch();
   // const theme = useMantineTheme();
-  const { id } = useParams();
-  const form = useForm();
-
+   const navigate = useNavigate();
+  const { id } = useParams()
   const [mode, setMode] = useState("add");
   const { client } = useSelector((state) => state.clientData);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    gst_number: "",
-    company_name: "",
-    website: "",
-    payment: "",
-    address:"",
+  const form = useForm({
+    initialValues: {
+      name: "",
+      email: "",
+      phone: "",
+      gst_number: "",
+      company_name: "",
+      website: "",
+      payment: "",
+      address: "",
+    },
+    validate: {
+      email: isEmail("Invalid email"),
+      gst_number: (value) =>
+        value.length === 15 ? "Name must have at least 2 letters" : null,
+      //   value.length < 3 ? "Password must have at least 3 letters" : null,
+    },
   });
 
   useEffect(() => {
@@ -46,7 +54,7 @@ export function AddClient(props) {
   }, []);
   useEffect(() => {
     if (client && mode === "edit") {
-      setFormData({
+      form.setValues({
         name: client.data?.[0]?.name || "",
         email: client.data?.[0]?.email || "",
         phone: client.data?.[0]?.phone || "",
@@ -59,24 +67,44 @@ export function AddClient(props) {
     }
   }, [client, mode]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-   
-    if (mode === "add") {
-      dispatch(addClient(formData));
-    } else {
-      await dispatch(updateClient(id, formData));
+  const onSubmit = async (values) => {
+    if (
+      values.phone &&
+      (!/^\d+$/.test(values.phone) || values.phone.trim().length !== 10)
+    ) {
+      form.setErrors({ phone: "Invalid phone number" });
+      return;
+    }
+    if (
+      values.name &&
+      (typeof values.name !== "string" || values.name.trim().length <= 2)
+    ) {
+      form.setErrors({ name: "Invalid Name" });
+
+      return;
+    }
+    if (values.gst_number && (values.gst_number.trim().length === 15)){
+      form.setErrors({ gst_number: "Invalid GST NUMBER" });
+
+      return;
+    }
+      if (mode === "add") {
+        dispatch(addClient(values)).then(() => {
+          form.reset();
+          navigate("/home/client");
+        });
+        
+      } else {
+        await dispatch(updateClient(id, values)).then(() => {
+          form.reset();
+          navigate("/home/client");
+      
+      });
     }
   };
 
   return (
     <div>
-      {/* <Group>
-        <h2 align="left" fw="md" fz="xs" ml="xl">
-          {mode === "edit" ? "Client Edit" : "Client Add"}
-        </h2>
-      </Group> */}
-
       <ScrollArea>
         {" "}
         <Paper
@@ -88,7 +116,7 @@ export function AddClient(props) {
           w="60%"
           style={{ backgroundColor: "#F1F3F5" }}
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
             <h2 align="left" fw="md" fz="xs">
               {mode === "edit" ? "CLIENT EDIT" : "CLIENT ADD"}
             </h2>
@@ -99,11 +127,12 @@ export function AddClient(props) {
               required
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
-              value={formData.name}
+              value={form.values.name}
               w="100%"
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                form.setValues({ ...form.values, name: e.target.value })
               }
+              {...form.getInputProps("name")}
             />
             <TextInput
               label="Email"
@@ -112,11 +141,12 @@ export function AddClient(props) {
               required
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
-              value={formData.email}
+              value={form.values.email}
               w="100%"
               onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
+                form.setValues({ ...form.values, email: e.target.value })
               }
+              {...form.getInputProps("email")}
             />
             <TextInput
               label="Phone"
@@ -125,11 +155,12 @@ export function AddClient(props) {
               required
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
-              value={formData.phone}
+              value={form.values.phone}
               w="100%"
               onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
+                form.setValues({ ...form.values, phone: e.target.value })
               }
+              {...form.getInputProps("phone")}
             />
             <TextInput
               label="Gst Number"
@@ -139,10 +170,11 @@ export function AddClient(props) {
               w="100%"
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
-              value={formData.gst_number}
+              value={form.values.gst_number}
               onChange={(e) =>
-                setFormData({ ...formData, gst_number: e.target.value })
+                form.setValues({ ...form.values, gst_number: e.target.value })
               }
+              {...form.getInputProps("gst_number")}
             />
             <TextInput
               label="Payment"
@@ -151,9 +183,9 @@ export function AddClient(props) {
               required
               color="#DEE2E6"
               w="100%"
-              value={formData.payment}
+              value={form.values.payment}
               onChange={(e) =>
-                setFormData({ ...formData, payment: e.target.value })
+                form.setValues({ ...form.values, payment: e.target.value })
               }
             />
             <TextInput
@@ -161,10 +193,10 @@ export function AddClient(props) {
               mt="sm"
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
-              value={formData.website}
+              value={form.values.website}
               w="100%"
               onChange={(e) =>
-                setFormData({ ...formData, website: e.target.value })
+                form.setValues({ ...form.values, website: e.target.value })
               }
             />
             <TextInput
@@ -173,9 +205,9 @@ export function AddClient(props) {
               labelProps={{ display: "flex" }}
               color="#DEE2E6"
               w="100%"
-              value={formData.company_name}
+              value={form.values.company_name}
               onChange={(e) =>
-                setFormData({ ...formData, company_name: e.target.value })
+                form.setValues({ ...form.values, company_name: e.target.value })
               }
             />
 

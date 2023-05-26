@@ -24,6 +24,14 @@ export async function getTaskService(id) {
         as: "user",
       },
     },
+    {
+      $lookup: {
+        from: "clients",
+        localField: "client_id",
+        foreignField: "_id",
+        as: "client",
+      },
+    },
   ]); //Get Task By Id Query
   return result;
 }

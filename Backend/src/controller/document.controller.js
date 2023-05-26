@@ -12,17 +12,23 @@ import { getRoleService } from "../service/Role.service.js";
 const { ObjectId } = Types;
 // --->>Creat Document
 export async function creatDocumentController(req, res) {
-    const data = { ...req.body, created_at: new Date() };
-  const result = await CreatDocumentService(data);
-  return res
-    .status(200)
-    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  try {
+     const data = { ...req.body, created_at: new Date() };
+     const result = await CreatDocumentService(data);
+     return res
+       .status(200)
+       .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+  } catch (error) {
+    return res.status(500).json({ message: error.message, statusCode: 500 });
+  }
+   
 }
 
 //Get Document By Id
 export async function getDocumentController(req, res) {
   const id = req.params.id;
-   if (!ObjectId.isValid(id)) {
+  try {
+     if (!ObjectId.isValid(id)) {
      return res
        .status(404)
        .json({ response: resType.DATANOTAVAIABLE, statusCode: 404 });
@@ -35,6 +41,10 @@ export async function getDocumentController(req, res) {
   return res
     .status(200)
     .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
+}
+  catch (error) {
+    return res.status(500).json({ message: error.message, statusCode: 500 });
+  }
 }
 //Get All Documents
 export async function getAllDocumentController(req, res) {

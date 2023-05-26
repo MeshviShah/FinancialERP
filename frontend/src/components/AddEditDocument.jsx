@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-
+import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import { useRef } from "react";
 import {
   ActionIcon,
   ScrollArea,
@@ -14,8 +15,12 @@ import {
   rem,
   Image,
   Box,
-  SimpleGrid,
+  Grid,
   MultiSelect,
+  createStyles,
+  Text,
+  Group,
+  Avatar,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import {
@@ -23,8 +28,9 @@ import {
   IconArrowRight,
   IconArrowLeft,
   IconUpload,
+  IconCloudUpload,
 } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { useForm, isNotEmpty } from "@mantine/form";
 import {
   addDocument,
   getOneDocument,
@@ -34,9 +40,37 @@ import { imageUpload } from "../redux/action/imageUpload.action";
 import { client } from "../redux/action/client.action";
 import { services } from "../redux/action/service.action";
 import { employee } from "../redux/action/employee.action.js";
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    position: "relative",
+    marginBottom: rem(30),
+  },
+
+  dropzone: {
+    borderWidth: rem(1),
+    paddingBottom: rem(50),
+  },
+
+  icon: {
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[3]
+        : theme.colors.gray[4],
+  },
+
+  control: {
+    position: "absolute",
+    width: rem(250),
+    left: `calc(50% - ${rem(125)})`,
+    bottom: rem(-20),
+  },
+}));
 export function AddEditDocument(props) {
   const dispatch = useDispatch();
   // const theme = useMantineTheme();
+  const { classes, theme } = useStyles();
+  const openRef = useRef();
+
   const { id } = useParams();
   const form = useForm({
     initialValues: {
@@ -44,7 +78,12 @@ export function AddEditDocument(props) {
       file: "",
       service: "",
       client_id: "",
-      user_id:[]
+      user_id: [],
+    },
+    validate: {
+      user_id: isNotEmpty("Select User"),
+      client_id: isNotEmpty("Select Client"),
+      //   value.length < 3 ? "Password must have at least 3 letters" : null,
     },
   });
 
@@ -57,15 +96,15 @@ const employees = useSelector((state) => state.employeeData);
   //image && form.setValues({ ...form.values, profile_image: image.data.filename });
    const clients = useSelector((state) => state.clientData)
    const service = useSelector((state) => state.service)
-
+  
     useEffect(() => {
       dispatch(client());
     }, [dispatch]);
      useEffect(() => {
        dispatch(services());
      }, [dispatch]);
-  if (clients?.client?.data) {
-    var data = clients?.client?.data?.map((data) => ({
+  if (clients?.clients?.data) {
+    var data = clients?.clients?.data?.map((data) => ({
       label: data?.name,
       value: data?._id,
     }));
@@ -91,16 +130,16 @@ const employees = useSelector((state) => state.employeeData);
   useEffect(() => {
     dispatch(employee());
   }, []);
-  const [formData, setFormData] = useState({});
   useEffect(() => {
     if (document && mode === "edit") {
+      const userIDs = document.document.data?.[0]?.user?.map((user) => user?._id) || []
       form.setValues({
         name: document.document.data?.[0]?.name || "",
         file: document.document.data?.[0]?.file || "",
         service: document.document.data?.[0]?.service?.[0]?._id || "",
         client_id: document.document.data?.[0]?.client?.[0]?._id || "",
         created_at: document.document.data?.[0]?.created_at || "",
-        user_id : document.document.data?.[0].user_id || ""
+        user_id: userIDs || "",
       });
       // console.log("Role value:", employee.data?.[0]?.role?.[0]?._id);
     }
@@ -120,8 +159,8 @@ const employees = useSelector((state) => state.employeeData);
       });
     }
   };
-  if (employees?.employee?.data) {
-    var Edata = employees?.employee?.data?.map((data) => ({
+  if (employees?.employees?.data) {
+    var Edata = employees?.employees?.data?.map((data) => ({
       label: data?.name,
       value: data?._id,
     }));
@@ -129,7 +168,7 @@ const employees = useSelector((state) => state.employeeData);
     Edata = [];
   }
   const handleSelectChange = (selectedOption) => {
-    console.log("Selected ID:", selectedOption);
+    // console.log("Selected ID:", selectedOption);
     form.setValues({ ...form.values, client_id: selectedOption });
   };
  
@@ -146,12 +185,6 @@ const employees = useSelector((state) => state.employeeData);
   };
   return (
     <div>
-      {/* <Group>
-        <h2 align="left" fw="md" fz="xs" ml="xl">
-          {mode === "edit" ? "Employee Edit" : "Employee Add"}
-        </h2>
-      </Group> */}
-
       <ScrollArea>
         {" "}
         <Paper
@@ -170,40 +203,98 @@ const employees = useSelector((state) => state.employeeData);
             <h3 align="left" fw="md" fz="xs">
               {mode === "edit" ? "Document Edit" : "Document Add"}
             </h3>
+            <Grid>
+              <Grid.Col span={6}>
+                <div className={classes.wrapper}>
+                  <Dropzone
+                    openRef={openRef}
+                    onDrop={fileupload}
+                    className={classes.dropzone}
+                    radius="md"
+                  >
+                    <div style={{ pointerEvents: "none" }}>
+                      <Group position="center">
+                        <Dropzone.Idle>
+                          <IconCloudUpload
+                            size={rem(50)}
+                            color={
+                              theme.colorScheme === "dark"
+                                ? theme.colors.dark[0]
+                                : theme.black
+                            }
+                            stroke={1.5}
+                          />
+                        </Dropzone.Idle>
+                      </Group>
 
-            <TextInput
-              label="Name"
-              mt="sm"
-              w="100%"
-              placeholder="Enter Name"
-              required
-              labelProps={{ display: "flex" }}
-              color="#DEE2E6"
-              value={form.values.name}
-              onChange={(e) =>
-                form.setValues({ ...form.values, name: e.target.value })
-              }
-            />
-           
-              <Select
-                placeholder="Pick"
-                label="Client"
-                data={data}
-                value={form.values.client}
-                onChange={handleSelectChange}
-                nothingFound="No options"
-                w="100%"
-                mt="sm"
-                labelProps={{ display: "flex" }}
-                required
-                dropdownPosition="bottom"
-                color="#DEE2E6"
-              />
-          
-            
-          
+                      <Text ta="center" fw={700} fz="lg" mt="xl">
+                        <Dropzone.Idle>Upload resume</Dropzone.Idle>
+                      </Text>
+                      <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                        Drag&apos;n&apos;drop files here to upload. We can
+                        accept only <i>.pdf</i> files that are less than 30mb in
+                        size.
+                      </Text>
+                    </div>
+                  </Dropzone>
 
-            {/* <MultiSelect
+                  <Button
+                    className={classes.control}
+                    size="md"
+                    radius="xl"
+                    onClick={() => openRef.current?.()}
+                  >
+                    Select files
+                  </Button>
+                </div>
+
+                {/* <FileInput
+                  type="file"
+                  label="Document"
+                  name="file"
+                  placeholder="document"
+                  w="100%"
+                  mt="sm"
+                  headers={{ "Content-Type": "multipart/form-data" }}
+                  icon={<IconUpload size={rem(14)} />}
+                  onChange={(e) => fileupload(e)}
+                  accept="image/png,image/jpeg"
+                  value={form.values.file}
+                  labelProps={{ display: "flex" }}
+                  color="#DEE2E6"
+                /> */}
+              </Grid.Col>
+              <Grid.Col span={6}>
+                {" "}
+                <TextInput
+                  label="Name"
+                  mt="sm"
+                  w="100%"
+                  placeholder="Enter Name"
+                  required
+                  labelProps={{ display: "flex" }}
+                  color="#DEE2E6"
+                  value={form.values.name}
+                  onChange={(e) =>
+                    form.setValues({ ...form.values, name: e.target.value })
+                  }
+                />
+                <Select
+                  placeholder="Pick"
+                  label="Client"
+                  data={data}
+                  value={form.values.client_id}
+                  onChange={handleSelectChange}
+                  nothingFound="No options"
+                  w="100%"
+                  mt="sm"
+                  labelProps={{ display: "flex" }}
+                  required
+                  dropdownPosition="bottom"
+                  color="#DEE2E6"
+                  {...form.getInputProps("client_id")}
+                />
+                {/* <MultiSelect
               label="Service"
               placeholder="Pick"
               searchable
@@ -218,36 +309,25 @@ const employees = useSelector((state) => state.employeeData);
               required
               dropdownPosition="bottom"
             /> */}
-            <MultiSelect
-              label="User"
-              placeholder="Pick"
-              searchable
-              nothingFound="No options"
-              data={Edata}
-              onChange={handleSelectUserChange}
-              value={form.values.user}
-              w="100%"
-              color="#DEE2E6"
-              mt="sm"
-              labelProps={{ display: "flex" }}
-              required
-              dropdownPosition="bottom"
-            />
-            <FileInput
-              type="file"
-              label="Document"
-              name="file"
-              placeholder="document"
-              w="100%"
-              mt="sm"
-              headers={{ "Content-Type": "multipart/form-data" }}
-              icon={<IconUpload size={rem(14)} />}
-              onChange={(e) => fileupload(e)}
-              accept="image/png,image/jpeg"
-              value={form.values.file}
-              labelProps={{ display: "flex" }}
-              color="#DEE2E6"
-            />
+                <MultiSelect
+                  label="User"
+                  placeholder="Pick"
+                  searchable
+                  nothingFound="No options"
+                  data={Edata}
+                  onChange={handleSelectUserChange}
+                  value={form.values.user_id}
+                  w="100%"
+                  color="#DEE2E6"
+                  mt="sm"
+                  labelProps={{ display: "flex" }}
+                  required
+                  dropdownPosition="bottom"
+                  {...form.getInputProps("user_id")}
+                />
+              </Grid.Col>
+            </Grid>
+
             <Button fullWidth mt="xl" w="30%" radius="md" type="submit">
               {mode === "add" ? "Add Document" : "Update Document"}
             </Button>

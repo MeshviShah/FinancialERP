@@ -6,11 +6,11 @@ export const clientDataslice = createSlice({
   initialState: {
     client: [],
     //isLodding: false,
-    clients: {},
+    clients: [],
   },
   reducers: {
     clientDataSuccess: (state, action) => {
-      state.client = action.payload;
+      state.clients = action.payload;
       state.message = action.payload?.res;
       state.status = action.payload?.status;
       state.isLodding = true;
@@ -20,11 +20,7 @@ export const clientDataslice = createSlice({
       state.message = action.payload?.res;
       state.error = action.payload?.error;
     },
-    addClientSuccess: (state, action) => {
-      state.client = action.payload;
-      state.message = action.payload?.res;
-      state.status = action.payload?.statusCode;
-    },
+    
     getClientSuccess: (state, action) => {
       state.client = action.payload;
       state.message = action.payload?.res;

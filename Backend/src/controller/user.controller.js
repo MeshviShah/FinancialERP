@@ -37,7 +37,7 @@ return res
   .status(200)
   .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
  }catch(error){
-return res.status(500).json({ message: err.message, statusCode: 500 });
+return res.status(500).json({ message: error.message, statusCode: 500 });
  }
 }
 //get All Users
@@ -56,9 +56,8 @@ export async function getAllUserController(req, res) {
    .status(200)
    .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
   }catch(error){
-return res.status(500).json({ message: err.message, statusCode: 500 });
+return res.status(500).json({ message: error.message, statusCode: 500 });
   }
- 
 }
 //Update User By Id
 export async function updateUserController(req, res) {
@@ -80,7 +79,7 @@ export async function updateUserController(req, res) {
     .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
 }
    catch (error) {
-    return res.status(500).json({ message: err.message, statusCode: 500 });
+    return res.status(500).json({ message: error.message, statusCode: 500 });
   }
 }
 //Delete User By Id
@@ -96,7 +95,7 @@ export async function deleteUserController(req, res) {
       .status(200)
       .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
   } catch (error) {
-    return res.status(500).json({ message: err.message, statusCode: 500 });
+    return res.status(500).json({ message: error.message, statusCode: 500 });
   }
 }
 
@@ -117,7 +116,7 @@ export async function getUserByIdController(req, res) {
        .status(200)
        .json({ data: result, res: resType.SUCCESS, statusCode: 200 });
   } catch (error) {
-    return res.status(500).json({ message: err.message, statusCode: 500 });
+    return res.status(500).json({ message: error.message, statusCode: 500 });
   }
  
 }

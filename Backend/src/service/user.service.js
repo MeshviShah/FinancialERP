@@ -65,7 +65,7 @@ export async function getAllUserService(data,firm_id) {
   const result = await user.aggregate([
     {
       $match: {
-        firm_id: firm_id,
+        firm_id: new ObjectId(firm_id),
       },
     },
     {
@@ -73,7 +73,6 @@ export async function getAllUserService(data,firm_id) {
         $or: [
           { name: { $regex: data.search, $options: "i" } },
           // { email: { $regex: data.search, $options: "i" } },
-          
         ],
       },
     },
@@ -117,7 +116,7 @@ export async function getAllUserService(data,firm_id) {
 }
 
 export async function updateUserService(id, data) {
-  //console.log(data,"data")
+  // console.log(id,"data")
   const result = await user.findByIdAndUpdate(id, data, { new: true }); //Update User By Id Query
   //const response = { ...result.toObject(), password: undefined }; // we can use ...result also
   
@@ -133,7 +132,7 @@ export async function deleteUserService(ids) {
 
 export async function getUserByEmailService({ email }) {
   //Fet USer By Id Query
-
+   
      const result = await user.aggregate([
    
     {
@@ -171,11 +170,10 @@ export async function getUserByName({ name }) {
 
 
 export async function countUserService(firm_id) {
-  const result = await user
-  .aggregate([
+  const result = await user.aggregate([
     {
       $match: {
-        firm_id:firm_id,
+        firm_id: new ObjectId(firm_id),
       },
     },
     {
@@ -191,8 +189,8 @@ export async function getMyDataService(id, firm_id) {
   const result = await user.aggregate([
     {
       $match: {
-        firm_id: firm_id },
-      
+        firm_id: new ObjectId(firm_id),
+      },
     },
     {
       $match: {

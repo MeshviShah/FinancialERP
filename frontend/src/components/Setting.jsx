@@ -27,7 +27,7 @@ export function Setting() {
   const dispatch = useDispatch();
   const employee = useSelector((state) => state.employeeData);
    const { image } = useSelector((state) => state.image);
-  console.log( employee.employee?.data,"j")
+  console.log( employee.mydata?.data,"j")
    useEffect(() => {
      dispatch(getEmployee());
    }, [dispatch]);
@@ -42,8 +42,8 @@ export function Setting() {
      },
    });
    useEffect(() => {
-     if (employee.employee?.data?.length > 0) {
-       const firstEmployee = employee.employee.data[0];
+     if (employee.mydata?.data?.length > 0) {
+       const firstEmployee = employee.mydata.data[0];
       
        form.setValues({
          name: firstEmployee.name || "",

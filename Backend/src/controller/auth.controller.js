@@ -23,7 +23,7 @@ import { startSession } from "mongoose";
 // const id =new  mongoose.Types.ObjectId();
 
 const secret = process.env.JWT_KEY;
-const API_URL = process.env.API_URL;
+const API_URL = process.env.FRONTEND_API_URL;
 //Register Controller
 export async function registerController(req, res) {
   const result = req.body;
@@ -82,22 +82,23 @@ export async function loginController(req, res) {
 //Forget PAssword Controller
 export async function forgetPasswordController(req, res) {
   const result = req.body;
+ 
   const data = await getUserByEmailService({ email: result.email });
-
   if (!data) return res.status(404).json({ response: resType.DATANOTAVAIABLE });
   const obj = {
-    email: data.email,
-    role_id: data.role_id,
-    firm_id: data.firm_id,
-    id: data.id,
+    email: data?.[0].email,
+    role_id: data?.[0].role_id,
+    firm_id: data?.[0].firm_id,
+    id: data?.[0].id,
   };
+  console.log(obj,"obj")
   const etext = await encrypt(obj);
   const accessToken = await tokenGen(etext);
   // const adata = { token: accessToken };
   //console.log(adata);
   const link = `${API_URL}/reset-token/:${accessToken}`;
   console.log(link);
-  const sendEmail = sendMail({ email: data.email, link: link });
+  const sendEmail = sendMail({ email: data?.[0].email, link: link });
   return res.status(200).json({ res: resType.SUCCESS, statusCode: 200});
 }
 
@@ -131,7 +132,8 @@ export async function resetPasswordController(req, res) {
 
       const dat = await passwordHash(password);
        const data = {"password" : dat}
-      const id = result.id;
+      //  console.log(result?.[0]._id,"result")
+      const id = result?.[0]._id;
 
       const passwordChange = await updateUserService(id, data);
   

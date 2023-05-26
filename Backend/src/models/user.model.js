@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   firm_id: {
-    type: mongoose.Schema.Types.Mixed,
+    type: mongoose.Schema.ObjectId,
     ref: "firm",
   },
   role_id: {
