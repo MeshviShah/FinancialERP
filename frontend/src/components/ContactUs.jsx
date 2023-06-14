@@ -130,7 +130,7 @@ export function ContactUS() {
               // onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
             <Button w="50%" mt={25} radius="xl" type="submit">
-              Log In
+              Contact Us
             </Button>
           </Paper>
         </Grid.Col>

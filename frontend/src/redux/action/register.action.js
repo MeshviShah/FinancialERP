@@ -8,8 +8,8 @@ export const register = (body) => async (dispatch) => {
     .then((response) => {
          notifications.show({
            title: "Success",
-           message: "Succesffuly Registerd",
-           autoClose: 8000,
+           message: "Succesfully Registerd",
+           autoClose: 6000,
          });
       dispatch(registerSuccess(response?.data));
     })
@@ -18,7 +18,7 @@ export const register = (body) => async (dispatch) => {
         notifications.show({
           title: "Error",
           message: "Please Try Again",
-          autoClose: 8000,
+          autoClose: 6000,
         });
       return dispatch(hasError(err.response?.data));
     });

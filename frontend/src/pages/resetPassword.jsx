@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 export function ResetPassword() {
   const { token } = useParams();
   console.log(token, "nmesb");
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const paperStyle = {
     width: 450,
@@ -26,8 +27,11 @@ export function ResetPassword() {
     },
   });
   const onSubmit = (values) => {
-    dispatch(resetPassword(token, values));
-    form.reset();
+    dispatch(resetPassword(token, values)).then(() => {
+      form.reset();
+      navigate("/login");
+    });
+    
   };
   const handleFieldChange = (event) => {
     const { name, value } = event.target;
@@ -54,6 +58,7 @@ export function ResetPassword() {
               value={form.values["password"]}
               onChange={handleFieldChange}
               required
+              
             />
             {/* 
             <PasswordInput
@@ -66,7 +71,7 @@ export function ResetPassword() {
               required
             /> */}
 
-            <Button type="submit">Reset password</Button>
+            <Button type="submit" mt="2rem">Reset password</Button>
           </form>
         </Box>
       </Paper>

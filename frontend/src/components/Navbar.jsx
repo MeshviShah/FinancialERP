@@ -27,6 +27,7 @@ import {
 import {
   getEmployee,
 } from "../redux/action/employee.action.js";
+import {Logout} from "../redux/action/login.action.js"
 import "../assets/MyBackground.css";
 const useStyles = createStyles((theme) => ({
   header: {
@@ -91,17 +92,13 @@ export function NavbarCom() {
   const role = localStorage.getItem("role");
     const dispatch = useDispatch();
   const handleLogOut = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("role");
-    
-
+    localStorage.clear();
+    console.log("mesh")
     navigate("/login");
   };
-  
    useEffect(() => {
      dispatch(getEmployee());
-   }, [dispatch]);
+   }, []);
    
     const employee = useSelector((state) => state.employeeData);
     const Myrole = employee.mydata?.data?.[0].role?.[0].name;

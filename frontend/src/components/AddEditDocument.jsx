@@ -40,6 +40,9 @@ import { imageUpload } from "../redux/action/imageUpload.action";
 import { client } from "../redux/action/client.action";
 import { services } from "../redux/action/service.action";
 import { employee } from "../redux/action/employee.action.js";
+import { notifications } from "@mantine/notifications";
+import { useNavigate } from "react-router-dom";
+
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
@@ -70,7 +73,7 @@ export function AddEditDocument(props) {
   // const theme = useMantineTheme();
   const { classes, theme } = useStyles();
   const openRef = useRef();
-
+  const navigate = useNavigate();
   const { id } = useParams();
   const form = useForm({
     initialValues: {
@@ -83,26 +86,24 @@ export function AddEditDocument(props) {
     validate: {
       user_id: isNotEmpty("Select User"),
       client_id: isNotEmpty("Select Client"),
-      //   value.length < 3 ? "Password must have at least 3 letters" : null,
+     
     },
   });
-
-  const [mode, setMode] = useState("add");
    
+  const [mode, setMode] = useState("add");
+     const [imageUrl, setImageUrl] = useState(null);
   const document = useSelector((state) => state.document);
-  console.log(document, "j");
+  
   const { image } = useSelector((state) => state.image);
+ 
 const employees = useSelector((state) => state.employeeData);
-  //image && form.setValues({ ...form.values, profile_image: image.data.filename });
    const clients = useSelector((state) => state.clientData)
-   const service = useSelector((state) => state.service)
+  
   
     useEffect(() => {
       dispatch(client());
     }, [dispatch]);
-     useEffect(() => {
-       dispatch(services());
-     }, [dispatch]);
+    
   if (clients?.clients?.data) {
     var data = clients?.clients?.data?.map((data) => ({
       label: data?.name,
@@ -111,20 +112,11 @@ const employees = useSelector((state) => state.employeeData);
   } else {
     data = [];
   }
-  // if (service?.service?.data) {
-  //   var serviceData = service?.service?.data?.map((data) => ({
-  //     label: data?.name,
-  //     value: data?._id,
-  //   }));
-  // } else {
-  //   serviceData = [];
-  // }
 
   useEffect(() => {
     if (id) {
       setMode("edit");
       dispatch(getOneDocument(id));
-   
     }
   }, [dispatch, id]);
   useEffect(() => {
@@ -136,7 +128,6 @@ const employees = useSelector((state) => state.employeeData);
       form.setValues({
         name: document.document.data?.[0]?.name || "",
         file: document.document.data?.[0]?.file || "",
-        service: document.document.data?.[0]?.service?.[0]?._id || "",
         client_id: document.document.data?.[0]?.client?.[0]?._id || "",
         created_at: document.document.data?.[0]?.created_at || "",
         user_id: userIDs || "",
@@ -146,16 +137,20 @@ const employees = useSelector((state) => state.employeeData);
   }, [document, mode]);
 
   const onSubmit = async (values) => {
-   
-    if (mode === "add") {
+    
+      if (mode === "add") {
+       
       dispatch(addDocument({ ...values, file: image?.data?.filename })).then(
         () => {
           form.reset();
+           navigate("/home/document");
         }
       );
     } else {
-      await dispatch(updateDocument(id, values)).then(() => {
+      const data = { ...values, file: image?.data?.filename };
+      await dispatch(updateDocument(id, data)).then(() => {
         form.reset();
+         navigate("/home/document");
       });
     }
   };
@@ -168,20 +163,33 @@ const employees = useSelector((state) => state.employeeData);
     Edata = [];
   }
   const handleSelectChange = (selectedOption) => {
-    // console.log("Selected ID:", selectedOption);
     form.setValues({ ...form.values, client_id: selectedOption });
   };
  
     const handleSelectUserChange = (selectedOption) => {
-      console.log(selectedOption)
+    //console.log(selectedOption)
      form.setValues({ ...form.values, user_id: selectedOption });
     };
   const fileupload = async (e) => {
-    // form.setValues({ ...form.values, profile_image: e.name });
-    const formData = new FormData();
-    formData.append("file", e);
-    console.log(formData, "meshvishah");
-    dispatch(imageUpload(formData));
+    const file = e?.[0];
+   
+    const allowedFormats = ["image/png", "image/jpeg"];
+
+    if (file) {
+      if (allowedFormats.includes(file.type)) {
+        const url = URL.createObjectURL(file);
+        setImageUrl(url);
+        const formData = new FormData();
+        formData.append("file", file);
+        dispatch(imageUpload(formData));
+      } else {
+        notifications.show({
+          title: "Error",
+          message: "Only PNG and JPEG formats are allowed.",
+          autoClose: 8000,
+        });
+      }
+    }
   };
   return (
     <div>
@@ -208,61 +216,64 @@ const employees = useSelector((state) => state.employeeData);
                 <div className={classes.wrapper}>
                   <Dropzone
                     openRef={openRef}
-                    onDrop={fileupload}
+                    onDrop={(e) => fileupload(e)}
                     className={classes.dropzone}
-                    radius="md"
+                    // radius="md"
+                    mt="2rem"
+                    // h="10rem"
+
+                    required
+                    {...form.getInputProps("file")}
                   >
                     <div style={{ pointerEvents: "none" }}>
                       <Group position="center">
-                        <Dropzone.Idle>
-                          <IconCloudUpload
-                            size={rem(50)}
-                            color={
-                              theme.colorScheme === "dark"
-                                ? theme.colors.dark[0]
-                                : theme.black
-                            }
-                            stroke={1.5}
+                        {imageUrl || document.document.data?.[0]?.file ? (
+                          // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                          <img
+                            src={imageUrl || document.document.data?.[0]?.file}
+                            href={imageUrl || document.document.data?.[0]?.file}
+                            alt="Uploaded Image Preview"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                            }}
                           />
-                        </Dropzone.Idle>
+                        ) : (
+                          <Dropzone.Idle>
+                            <IconCloudUpload
+                              size={rem(50)}
+                              color={
+                                theme.colorScheme === "dark"
+                                  ? theme.colors.dark[0]
+                                  : theme.black
+                              }
+                              stroke={1.5}
+                            />
+                          </Dropzone.Idle>
+                        )}
                       </Group>
 
-                      <Text ta="center" fw={700} fz="lg" mt="xl">
-                        <Dropzone.Idle>Upload resume</Dropzone.Idle>
-                      </Text>
-                      <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                        Drag&apos;n&apos;drop files here to upload. We can
-                        accept only <i>.pdf</i> files that are less than 30mb in
-                        size.
+                      <Text ta="center" fw={700} fz="lg" mt="sm">
+                        <Dropzone.Idle>Upload Document</Dropzone.Idle>
                       </Text>
                     </div>
                   </Dropzone>
 
                   <Button
+                    // align="right"
+                    // variant="gradient"
+                    // gradient={{ from: "teal", to: "lime", deg: 105 }}
                     className={classes.control}
-                    size="md"
-                    radius="xl"
-                    onClick={() => openRef.current?.()}
+                    size="sm"
+                    radius="md"
+                    onClick={(e) => {
+                      openRef.current?.();
+                      fileupload(e);
+                    }}
                   >
                     Select files
                   </Button>
                 </div>
-
-                {/* <FileInput
-                  type="file"
-                  label="Document"
-                  name="file"
-                  placeholder="document"
-                  w="100%"
-                  mt="sm"
-                  headers={{ "Content-Type": "multipart/form-data" }}
-                  icon={<IconUpload size={rem(14)} />}
-                  onChange={(e) => fileupload(e)}
-                  accept="image/png,image/jpeg"
-                  value={form.values.file}
-                  labelProps={{ display: "flex" }}
-                  color="#DEE2E6"
-                /> */}
               </Grid.Col>
               <Grid.Col span={6}>
                 {" "}
@@ -294,21 +305,6 @@ const employees = useSelector((state) => state.employeeData);
                   color="#DEE2E6"
                   {...form.getInputProps("client_id")}
                 />
-                {/* <MultiSelect
-              label="Service"
-              placeholder="Pick"
-              searchable
-              nothingFound="No options"
-              data={serviceData}
-              onChange={handleSelectServiceChange}
-              value={form.values.service}
-              w="100%"
-              color="#DEE2E6"
-              mt="sm"
-              labelProps={{ display: "flex" }}
-              required
-              dropdownPosition="bottom"
-            /> */}
                 <MultiSelect
                   label="User"
                   placeholder="Pick"
@@ -327,10 +323,39 @@ const employees = useSelector((state) => state.employeeData);
                 />
               </Grid.Col>
             </Grid>
-
-            <Button fullWidth mt="xl" w="30%" radius="md" type="submit">
-              {mode === "add" ? "Add Document" : "Update Document"}
-            </Button>
+            <Grid>
+              <Grid.Col span={6}>
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                  ml={200}
+                  onClick={() => navigate("/home/document")}
+                >
+                  {" "}
+                  Back
+                </Button>
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                >
+                  {mode === "add" ? "Add " : "Update"}
+                </Button>
+              </Grid.Col>
+            </Grid>
           </form>
         </Paper>
       </ScrollArea>

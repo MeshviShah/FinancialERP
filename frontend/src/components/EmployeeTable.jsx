@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Modal,
   Avatar,
   Badge,
   Table,
@@ -25,7 +26,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 
-
+import { useDisclosure } from "@mantine/hooks";
 import { deleteEmployee, employee } from "../redux/action/employee.action.js";
 import { roles } from "../redux/action/role.action.js";
 import { queryBuilder } from "../utils/QueryBuilder.js";
@@ -42,9 +43,10 @@ export function EmployeeTable() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.employeeData);
+   const [isModelOpen, setIsModelOpen] = useState(false);
   const searchInputRef = useRef(null);
 const role = localStorage.getItem("role");
-
+ const [opened, { open, close }] = useDisclosure(false);
   useEffect(() => {
     const query = queryBuilder(searchobj);
     dispatch(employee(query));
@@ -54,19 +56,33 @@ const role = localStorage.getItem("role");
     if (id) navigate("/home/addemployee/" + id);
     else navigate("/home/addemployee");
   };
-  const handleDelete = async (id) => {
-    dispatch(deleteEmployee([id]));
+  const handleDelete = async () => {
+ 
+    selection && dispatch(deleteEmployee(selection));
+    // id && dispatch(deleteEmployee([id]));
     window.location.reload();
   };
   
-  const handleDeleteAll = async () => {
-   
-    selection && dispatch(deleteEmployee(selection));
-    window.location.reload();
+  const handleDeleteAll = async (id) => {
+    setIsModelOpen(true); 
+    if(id) 
+    {
+      setSelection((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id]
+    );
+    }
+    // selection && dispatch(deleteEmployee(selection));
+    // window.location.reload();
    
   };
+   
+    const handleClose = () => {
+      setIsModelOpen(false); // Close the model
+    };
+  
   const emp = user.employees;
-
   if (user && user.employees && user.employees.data) {
     var row = emp.data.map((data) => (
       <tr key={data._id}>
@@ -148,7 +164,7 @@ const role = localStorage.getItem("role");
                   size="1rem"
                   stroke={1.5}
                   onClick={() => {
-                    handleDelete(data._id);
+                    handleDeleteAll(data._id);
                   }}
                 />
               </ActionIcon>
@@ -172,8 +188,9 @@ const role = localStorage.getItem("role");
             <Button
               align="right"
               variant="gradient"
+              w="10rem"
               gradient={{ from: "teal", to: "lime", deg: 105 }}
-              ml="60em"
+              ml="70em"
               onClick={() => handleButtonClick()}
             >
               ADD USER
@@ -234,7 +251,7 @@ const role = localStorage.getItem("role");
           >
             <thead>
               <tr>
-                {role === "admin" && selection.length>=1 ? (
+                {role === "admin" && selection.length >= 1 ? (
                   <th>
                     <ActionIcon color="black">
                       <IconTrash
@@ -246,9 +263,37 @@ const role = localStorage.getItem("role");
                       />
                     </ActionIcon>
                   </th>
-                ) : <th></th>}
+                ) : (
+                  <th></th>
+                )}
                
+                {isModelOpen && (
+                  <Modal
+                    opened={open}
+                    onClose={close}
+                    title="Confirmation"
+                    size="sm"
+                    withCloseButton={false}
+                  >
+                    <Text
+                      size="lg"
+                      weight={500}
+                      style={{ marginBottom: "20px" }}
+                    >
+                      Are you sure you want to delete this item?
+                    </Text>
 
+                    <Button onClick={handleDelete} color="red">
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={handleClose}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Cancel
+                    </Button>
+                  </Modal>
+                )}
                 <th>profile Image</th>
                 <th>Name</th>
                 <th>Email</th>
@@ -261,9 +306,7 @@ const role = localStorage.getItem("role");
             <tbody>
               {user.status === 404 ? (
                 <tr>
-                
-                   <td>No data</td> 
-                
+                  <td>No data</td>
                 </tr>
               ) : (
                 row

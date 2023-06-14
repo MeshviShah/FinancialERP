@@ -48,7 +48,7 @@ export const addEmployee = (body) => async (dispatch) => {
     });
 };
 export const updateEmployee = (id, body) => async (dispatch) => {
-   console.log(body, "body");
+   console.log(body, "action");
   await axio
     .put("/user/" + id, body)
     .then((response) => {
@@ -70,6 +70,7 @@ export const deleteEmployee = (body) => async (dispatch) => {
     });
 };
 export const getEmployee = () => async (dispatch) => {
+  console.log("getEmployee")
   await axio
     .get("/user/mydata" )
     .then((response) => {

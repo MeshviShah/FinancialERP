@@ -12,6 +12,7 @@ import {
   PasswordInput,
   Select,
   SimpleGrid,
+  Grid
 } from "@mantine/core";
 import { IconCamera } from "@tabler/icons-react";
 import { useForm, isEmail, hasLength, isNotEmpty } from "@mantine/form";
@@ -54,7 +55,7 @@ export function AddEmployee(props) {
   const [mode, setMode] = useState("add");
   const [imageUrl, setImageUrl] = useState(null);
   const { employee } = useSelector((state) => state.employeeData);
-  //console.log(employee,"employtee")
+  console.log(employee,"employtee")
   const { image } = useSelector((state) => state.image);
   //image && form.setValues({ ...form.values, profile_image: image.data.filename });
 
@@ -77,6 +78,7 @@ export function AddEmployee(props) {
     }
   }, [dispatch, id]);
   // const [formData, setFormData] = useState({});
+ 
   useEffect(() => {
     if (employee && mode === "edit") {
       form.setValues({
@@ -85,7 +87,8 @@ export function AddEmployee(props) {
         phone: employee.data?.[0]?.phone || "",
         role_id: employee.data?.[0]?.role?.[0]?._id || "",
         profile_image: employee.data?.[0]?.profile_image || "",
-        department:employee.data?.[0]?.department || "",
+        department: employee.data?.[0]?.department || "",
+        password: employee.data?.[0]?.password,
       });
       // console.log("Role value:", employee.data?.[0]?.role?.[0]?._id);
     }
@@ -212,7 +215,7 @@ notifications.show({
                   fileInput.type = "file";
                   //fileInput.accept = "image/*";
                   fileInput.onchange = fileupload;
-                  // fileInput.accept = "image/png,image/jpeg"; 
+                  // fileInput.accept = "image/png,image/jpeg";
                   fileInput.click();
                 }}
               >
@@ -330,9 +333,39 @@ notifications.show({
               </>
             )}
             <div></div>
-            <Button fullWidth mt="xl" w="30%" radius="md" type="submit">
-              {mode === "add" ? "Add User" : "Update User"}
-            </Button>
+            <Grid>
+              <Grid.Col span={6}>
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                  ml={200}
+                  onClick={() => navigate("/home/employee")}
+                >
+                  {" "}
+                  Back
+                </Button>
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                >
+                  {mode === "add" ? "Add" : "Update"}
+                </Button>
+              </Grid.Col>
+            </Grid>
           </form>
         </Paper>
       </ScrollArea>

@@ -11,7 +11,7 @@ export const passwordslice = createSlice({
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
       state.isLogin = true;
-      state.accessToken = action.payload?.data.accessToken;
+      
     },
     hasError: (state, action) => {
       state.status = action.payload?.statusCode;
@@ -23,8 +23,8 @@ export const passwordslice = createSlice({
       state.password = action.payload?.data;
       state.message = action.payload?.res;
       state.status = action.payload?.statusCode;
-      state.isLogin = true;
-      state.accessToken = action.payload?.data.accessToken;
+
+     
     },
     chnagePasswordSuccess: (state, action) => {
       //console.log(state.action, "slice")

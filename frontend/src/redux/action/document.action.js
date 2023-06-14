@@ -9,12 +9,11 @@ import {
   documentCountSuccess,
 } from "../slice/document.slice";
 
-export const documents = () => async (dispatch) => {
-
+export const documents = (query) => async (dispatch) => {
+ const searchQuery = query?.search ?? "";
   await axio
-    .get('/document')
+    .get(`/document/?&search=${searchQuery}`)
     .then((response) => {
-        
       dispatch(documentDataSuccess(response.data));
     })
     .catch((err) => {
@@ -33,11 +32,11 @@ export const getOneDocument = (id) => async (dispatch) => {
     });
 };
 export const addDocument = (body) => async (dispatch) => {
-  console.log(body, "body");
+  console.log(body,"actyion")
   await axio
     .post("/document", body)
-    .then((response) => {
-      dispatch(addDocumentSuccess(response.data));
+    .then(() => {
+      return true
     })
     .catch((err) => {
       return dispatch(hasError(err.response?.data));

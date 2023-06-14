@@ -2,15 +2,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
-  Avatar,
-  Group,
-  ActionIcon,
   ScrollArea,
   Button,
   Paper,
   TextInput,
-  Checkbox,
-  Select,
+  Grid
 } from "@mantine/core";
 import { useForm, isEmail } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
@@ -210,10 +206,41 @@ export function AddClient(props) {
                 form.setValues({ ...form.values, company_name: e.target.value })
               }
             />
-
-            <Button fullWidth mt="xl" w="25%" radius="md" type="submit">
-              {mode === "add" ? "Add Client" : "Update Client"}
-            </Button>
+            <Grid>
+              <Grid.Col span={6}>
+                {" "}
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                  ml={200}
+                  onClick={() => navigate("/home/client")}
+                >
+                  {" "}
+                  Back
+                </Button>
+              </Grid.Col>
+              <Grid.Col span={6}>
+                {" "}
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                >
+                  {mode === "add" ? "Add" : "Update"}
+                </Button>
+              </Grid.Col>
+            </Grid>
           </form>
         </Paper>
       </ScrollArea>

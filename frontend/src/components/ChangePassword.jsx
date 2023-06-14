@@ -13,6 +13,7 @@ export function ChangePassword() {
      initialValues: {
        password: "",
        newPassword: "",
+       confirmPassword:""
      },
      validate: {
        newPassword: (value) =>
@@ -22,6 +23,10 @@ export function ChangePassword() {
      },
    });
     const onSubmit = (values) => {
+       if (values.newPassword !== values.confirmPassword) {
+         form.setErrors({ confirmPassword: "Passwords did not match" });
+         return;
+       }
       dispatch(changePassword(values))
       console.log(values)
       form.reset();
@@ -46,6 +51,7 @@ export function ChangePassword() {
       >
         <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
           <PasswordInput
+            required
             label="Old Password"
             mt="sm"
             labelProps={{ display: "flex" }}
@@ -54,6 +60,7 @@ export function ChangePassword() {
             name="password"
             value={form.values["password"]}
             onChange={handleFieldChange}
+            {...form.getInputProps("password")}
           />
           <PasswordInput
             label="New Password"
@@ -64,6 +71,20 @@ export function ChangePassword() {
             name="newPassword"
             value={form.values["newPassword"]}
             onChange={handleFieldChange}
+            required
+            {...form.getInputProps("newPassword")}
+          />
+          <PasswordInput
+            label="Confirm Password"
+            mt="sm"
+            labelProps={{ display: "flex" }}
+            color="#DEE2E6"
+            w="50%"
+            name="newPassword"
+            value={form.values["confirmPassword"]}
+            onChange={handleFieldChange}
+            required
+            {...form.getInputProps("confirmPassword")}
           />
           <Button
             variant="gradient"

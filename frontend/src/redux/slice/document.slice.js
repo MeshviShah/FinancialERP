@@ -5,12 +5,12 @@ export const DocumentSlice = createSlice({
   initialState: {
     document: [],
     isLodding: false,
+    documents:[],
   },
   reducers: {
     documentDataSuccess: (state, action) => {
-      state.document = action.payload;
+      state.documents = action.payload;
       state.message = action.payload?.res;
-      state.status = action.payload?.statusCode;
       state.isLodding = true;
     },
     hasError: (state, action) => {

@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createStyles,
-  Avatar,
+  Modal,
   Badge,
   Table,
   Group,
@@ -21,7 +21,7 @@ import {
 } from "@mantine/core";
 import { IconSearch, IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
-
+import { useDisclosure } from "@mantine/hooks";
 import { deleteDocument, documents } from "../redux/action/document.action";
 
 import { queryBuilder } from "../utils/QueryBuilder.js";
@@ -45,48 +45,63 @@ export function DocumentTable() {
           ? current.filter((item) => item !== id)
           : [...current, id]
       );
-      
+      const role = localStorage.getItem("role");
   const theme = useMantineTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const document = useSelector((state) => state.document);
   console.log(document,"doc")
+   const [isModelOpen, setIsModelOpen] = useState(false);
+   const [opened, { open, close }] = useDisclosure(false);
   const searchInputRef = useRef(null);
-  //const filterInputRef = useRef(null);
 
   useEffect(() => {
-    dispatch(documents()); 
-  }, [dispatch]);
+    const query = queryBuilder(searchobj);
+    dispatch(documents(query));
+  }, [dispatch, searchobj]);
+  // useEffect(() => {
+  //   dispatch(documents()); 
+  // }, []);
   const handleButtonClick = (id) => {
     if (id) navigate("/home/adddocument/" + id);
     else navigate("/home/adddocument");
   };
-  const handleDelete = async (id) => {
-    // console.log([id],"mm")
-   dispatch(deleteDocument([id]));
-    window.location.reload();
+  const handleDelete = async () => {
+   selection && dispatch(deleteDocument(selection));
+   // id && dispatch(deleteEmployee([id]));
+   window.location.reload();
   };
  
-  const handleDeleteAll = async () => {
-    selection && (dispatch(deleteDocument(selection)));
-    window.location.reload();
+  const handleDeleteAll = async (id) => {
+      setIsModelOpen(true);
+      if (id) {
+        setSelection((current) =>
+          current.includes(id)
+            ? current.filter((item) => item !== id)
+            : [...current, id]
+        );
+      }
   };
-
-  if (document && document.document && document.document.data) {
-    var row = document?.document?.data.map((data) => (
-      <tr key={data._id} >
-        <td>
-          <Checkbox
-            checked={selection.includes(data._id)}
-            onChange={() => toggleRow(data._id)}
-            transitionDuration={0}
-          />
-        </td>
+  const handleClose = () => {
+    setIsModelOpen(false); // Close the model
+  };
+  if (document && document.documents && document.documents.data) {
+    var row = document?.documents?.data.map((data) => (
+      <tr key={data?._id}>
+        {role === "admin" && (
+          <td>
+            <Checkbox
+              checked={selection.includes(data?._id)}
+              onChange={() => toggleRow(data._id)}
+              transitionDuration={0}
+            />
+          </td>
+        )}
         <td>
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
-            
-            <a href={data?.file} rel = "file noreferrer" target="_blank">
+
+            <a href={data?.file} rel="file noreferrer" target="_blank">
               {data?.name}
             </a>
           </Group>
@@ -97,8 +112,8 @@ export function DocumentTable() {
             {/* <Avatar size={30}  radius={30} /> */}
             <Text fz="sm" fw={500} c="dimmed">
               {data?.user.map((user) => (
-                <Text key={user._id} fz="sm" fw={500} c="dimmed">
-                  {user.name},
+                <Text key={user?._id} fz="sm" fw={500} c="dimmed">
+                  {user?.name},
                 </Text>
               ))}
             </Text>
@@ -134,8 +149,8 @@ export function DocumentTable() {
               <IconPencil
                 size="1rem"
                 stroke={1.5}
-                id={data._id}
-                onClick={() => handleButtonClick(data._id)}
+                id={data?._id}
+                onClick={() => handleButtonClick(data?._id)}
               />
             </ActionIcon>
             <ActionIcon color="red">
@@ -143,7 +158,7 @@ export function DocumentTable() {
                 size="1rem"
                 stroke={1.5}
                 onClick={() => {
-                  handleDelete(data._id);
+                  handleDeleteAll(data?._id);
                 }}
               />
             </ActionIcon>
@@ -152,9 +167,7 @@ export function DocumentTable() {
       </tr>
     ));
   }
-  // if (document.status === 404) {
-  //   console.log("meshg");
-  // }
+ 
   return (
     <div>
       <Group>
@@ -168,7 +181,7 @@ export function DocumentTable() {
             align="right"
             variant="gradient"
             gradient={{ from: "teal", to: "lime", deg: 105 }}
-            ml="60em"
+            ml="66em"
             onClick={() => handleButtonClick()}
           >
             ADD DOCUMENT
@@ -177,15 +190,11 @@ export function DocumentTable() {
       </Group>
       <ScrollArea>
         {" "}
-        <Paper shadow="sm" radius="md" p="sm" mt="sm" >
+        <Paper shadow="sm" radius="md" p="sm" mt="sm">
           <Grid grow gutter="xl">
             {" "}
+            <Grid.Col span={6}></Grid.Col>
             <Grid.Col span={6}>
-              {/* <h3 align="left" fw="md" fz="xs">
-                Document
-              </h3> */}
-            </Grid.Col>
-            {/* <Grid.Col span={6}>
               <TextInput
                 icon={<IconSearch size="1.1rem" stroke={1.5} />}
                 radius="xl"
@@ -217,7 +226,7 @@ export function DocumentTable() {
                 placeholder="Search questions"
                 rightSectionWidth={50}
               />
-            </Grid.Col> */}
+            </Grid.Col>
           </Grid>
 
           <Table
@@ -228,17 +237,48 @@ export function DocumentTable() {
           >
             <thead>
               <tr>
-                <th>
-                  <ActionIcon color="black">
-                    <IconTrash
-                      size="1.5rem"
-                      stroke={1.5}
-                      onClick={() => {
-                        handleDeleteAll();
-                      }}
-                    />
-                  </ActionIcon>
-                </th>
+                {role === "admin" && selection.length >= 1 ? (
+                  <th>
+                    <ActionIcon color="black">
+                      <IconTrash
+                        size="1.5rem"
+                        stroke={1.5}
+                        onClick={() => {
+                          handleDeleteAll();
+                        }}
+                      />
+                    </ActionIcon>
+                  </th>
+                ) : (
+                  <th></th>
+                )}
+                {isModelOpen && (
+                  <Modal
+                    opened={open}
+                    onClose={close}
+                    title="Confirmation"
+                    size="sm"
+                    withCloseButton={false}
+                  >
+                    <Text
+                      size="lg"
+                      weight={500}
+                      style={{ marginBottom: "20px" }}
+                    >
+                      Are you sure you want to delete this item?
+                    </Text>
+
+                    <Button onClick={handleDelete} color="red">
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={handleClose}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Cancel
+                    </Button>
+                  </Modal>
+                )}
                 <th>Name</th>
                 <th>User</th>
                 <th>Client Name</th>
@@ -248,11 +288,12 @@ export function DocumentTable() {
               </tr>
             </thead>
             <tbody>
-              {document.status === 404 ? (
+              {document.documents?.statusCode === 404 ||
+              document.status === 404 ? (
                 <tr>
-                  {" "}
-                  <td /> <td /> <td>No data</td> <td /> <td />
-                  <td />{" "}
+                 
+                 <td>No data
+               </td>
                 </tr>
               ) : (
                 row

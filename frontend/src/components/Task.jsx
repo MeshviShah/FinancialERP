@@ -1,4 +1,5 @@
 import {
+  Modal,
   Avatar,
   Badge,
   Table,
@@ -13,7 +14,6 @@ import {
   Paper,
   Checkbox,
   Grid,
-  TextInput,
 } from "@mantine/core";
 import {
   IconPencil,
@@ -22,15 +22,17 @@ import {
   IconArrowRight,
 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState, useRef } from "react";
 import { tasks, deleteTask } from "../redux/action/task.action";
-import { AddEditTask } from "./AddEditTask";
 import { useNavigate } from "react-router-dom";
 import moment from "moment"
 import { queryBuilder } from "../utils/QueryBuilder";
 export function TaskTable() {
    const [searchobj, setSearchobj] = useState({});
    const [selection, setSelection] = useState([]);
+     const [isModelOpen, setIsModelOpen] = useState(false);
+      const [opened, { open, close }] = useDisclosure(false);
     const theme = useMantineTheme();
    const toggleRow = (id) =>
      setSelection((current) =>
@@ -54,15 +56,26 @@ export function TaskTable() {
     if (id) navigate("/home/addtask/" + id);
     else navigate("/home/addtask");
   };
-  const handleDelete = async (id) => {
-    console.log(id)
-    dispatch(deleteTask([id]))  
-    window.location.reload();
+     const handleClose = () => {
+       setIsModelOpen(false); // Close the model
+        window.location.reload();
+     };
+  const handleDelete = async () => {
+     selection && dispatch(deleteTask(selection));
+     // id && dispatch(deleteEmployee([id]));
+     window.location.reload();
   };
- const handleDeleteAll = async () => {
-   selection && dispatch(deleteTask(selection));
-   window.location.reload();
+ const handleDeleteAll = async (id) => {
+    setIsModelOpen(true);
+    if (id) {
+      setSelection((current) =>
+        current.includes(id)
+          ? current.filter((item) => item !== id)
+          : [...current, id]
+      );
+    }
  };
+ 
   if (task && task.tasks && task.tasks.data) {
     var row = task.tasks.data.map((data) => (
       <tr key={data._id}>
@@ -103,6 +116,17 @@ export function TaskTable() {
             ))}
           </Group>
         </td>
+
+        <td>
+          <Group spacing="sm">
+            {/* <Avatar size={30}  radius={30} /> */}
+            {data?.user.map((user) => (
+              <Text  fz="sm" fw={500} c="dimmed">
+                {data?.client?.[0]?.name}
+              </Text>
+            ))}
+          </Group>
+        </td>
         <td>
           <Group spacing="sm">
             {/* <Avatar size={30}  radius={30} /> */}
@@ -127,7 +151,7 @@ export function TaskTable() {
                   size="1rem"
                   stroke={1.5}
                   onClick={() => {
-                    handleDelete(data._id);
+                    handleDeleteAll(data._id);
                   }}
                 />
               </ActionIcon>
@@ -151,9 +175,9 @@ export function TaskTable() {
               align="right"
               variant="gradient"
               gradient={{ from: "teal", to: "lime", deg: 105 }}
-              ml="57em"
+              ml="62em"
               onClick={() => handleButtonClick()}
-              w="100%"
+              w="10rem"
             >
               ADD TASK
             </Button>
@@ -172,7 +196,7 @@ export function TaskTable() {
               </h3>
             </Grid.Col>
             <Grid.Col span={6}>
-              <TextInput
+              {/* <TextInput
                 icon={<IconSearch size="1.1rem" stroke={1.5} />}
                 radius="xl"
                 size="md"
@@ -202,7 +226,7 @@ export function TaskTable() {
                 }
                 placeholder="Search Task"
                 rightSectionWidth={50}
-              />
+              /> */}
             </Grid.Col>
           </Grid>
 
@@ -229,9 +253,37 @@ export function TaskTable() {
                 ) : (
                   <th></th>
                 )}
+                {isModelOpen && (
+                  <Modal
+                    opened={open}
+                    onClose={close}
+                    title="Confirmation"
+                    size="sm"
+                    withCloseButton={false}
+                  >
+                    <Text
+                      size="lg"
+                      weight={500}
+                      style={{ marginBottom: "20px" }}
+                    >
+                      Are you sure you want to delete this item?
+                    </Text>
+
+                    <Button onClick={handleDelete} color="red">
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={handleClose}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Cancel
+                    </Button>
+                  </Modal>
+                )}
                 <th>NAME</th>
                 <th>STATUS</th>
                 <th>EMPLOYEE</th>
+                <th>CLIENT</th>
                 <th>Created Data</th>
 
                 <th />

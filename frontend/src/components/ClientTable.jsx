@@ -9,7 +9,7 @@ import {
   Group,
   Text,
   ActionIcon,
-  Anchor,
+  Modal,
   ScrollArea,
   useMantineTheme,
   Title,
@@ -25,15 +25,16 @@ import {
   IconArrowRight,
 } from "@tabler/icons-react";
 import { client, deleteClient } from "../redux/action/client.action";
-import { AddClient } from "./AddClient";
 import { queryBuilder } from "../utils/QueryBuilder";
-
+import { useDisclosure } from "@mantine/hooks";
 
 export function ClientTable() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchobj, setSearchobj] = useState({});
   const [selection, setSelection] = useState([]);
+    const [isModelOpen, setIsModelOpen] = useState(false);
+    const [opened, { open, close }] = useDisclosure(false);
    const toggleRow = (id) =>
      setSelection((current) =>
        current.includes(id)
@@ -52,13 +53,24 @@ export function ClientTable() {
     if (id) navigate("/home/addclient/" + id);
     else navigate("/home/addclient");
   };
-  const handleDelete = async (id) => {
-    await dispatch(deleteClient([id]));
+  const handleDelete = async () => {
+    console.log(selection , "fe")
+    selection && dispatch(deleteClient(selection));
     window.location.reload();
   };
-   const handleDeleteAll = async () => {
-     selection && dispatch(deleteClient(selection));
-     window.location.reload();
+   const handleClose = () => {
+     setIsModelOpen(false); // Close the model
+
+   };
+   const handleDeleteAll = async (id) => {
+     setIsModelOpen(true);
+     if (id) {
+       setSelection((current) =>
+         current.includes(id)
+           ? current.filter((item) => item !== id)
+           : [...current, id]
+       );
+     }
    };
   const theme = useMantineTheme();
 
@@ -140,7 +152,7 @@ export function ClientTable() {
                   size="1rem"
                   stroke={1.5}
                   onClick={() => {
-                    handleDelete(data._id);
+                    handleDeleteAll(data._id);
                   }}
                 />
               </ActionIcon>
@@ -165,6 +177,7 @@ export function ClientTable() {
               variant="gradient"
               gradient={{ from: "teal", to: "lime", deg: 105 }}
               ml="60em"
+              w="10rem"
               onClick={() => handleButtonClick()}
             >
               ADD CLIENT
@@ -238,11 +251,39 @@ export function ClientTable() {
                 ) : (
                   <th></th>
                 )}
+                {isModelOpen && (
+                  <Modal
+                    opened={open}
+                    onClose={close}
+                    title="Confirmation"
+                    size="sm"
+                    withCloseButton={false}
+                  >
+                    <Text
+                      size="lg"
+                      weight={500}
+                      style={{ marginBottom: "20px" }}
+                    >
+                      Are you sure you want to delete this item?
+                    </Text>
+
+                    <Button onClick={handleDelete} color="red">
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={handleClose}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Cancel
+                    </Button>
+                  </Modal>
+                )}
                 <th>NAME</th>
                 <th>PAYMENT</th>
                 <th>COMPUNY NAME</th>
                 <th>Email</th>
                 <th>phone</th>
+
                 <th />
               </tr>
             </thead>

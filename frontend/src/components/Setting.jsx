@@ -15,9 +15,10 @@ import {
   Image,
 } from "@mantine/core";
 import { IconCamera } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { useForm, isEmail } from "@mantine/form";
 import { ChangePassword } from "./ChangePassword";
 import { imageUpload } from "../redux/action/imageUpload.action";
+import { notifications } from "@mantine/notifications";
 import {
   getEmployee,
   updateEmployee,
@@ -26,6 +27,7 @@ export function Setting() {
    const [imageUrl, setImageUrl] = useState(null);
   const dispatch = useDispatch();
   const employee = useSelector((state) => state.employeeData);
+  
    const { image } = useSelector((state) => state.image);
   console.log( employee.mydata?.data,"j")
    useEffect(() => {
@@ -40,6 +42,11 @@ export function Setting() {
        profile_image: "",
        department: "",
      },
+     validate: {
+       email: isEmail("Invalid email"),
+       
+       //   value.length < 3 ? "Password must have at least 3 letters" : null,
+     },
    });
    useEffect(() => {
      if (employee.mydata?.data?.length > 0) {
@@ -49,16 +56,14 @@ export function Setting() {
          name: firstEmployee.name || "",
          email: firstEmployee.email || "",
          phone: firstEmployee.phone || "",
-        profile_image: firstEmployee.profile_image || "",
+         profile_image: firstEmployee.profile_image || "",
          department: firstEmployee.department || "",
+         password: firstEmployee.password || "",
        });
      }
    }, [employee]);
     const onSubmit = async (values) => {
-      if (!/^\S+@\S+$/.test(values.email)) {
-        form.setErrors({ email: "Invalid email" });
-        return;
-      }
+      
       if (
         values.phone &&
         (!/^\d+$/.test(values.phone) || values.phone.trim().length !== 10)
@@ -69,12 +74,17 @@ export function Setting() {
       
     
         await dispatch(
-          updateEmployee(employee?.employee?.data?.[0]?._id, {
+          updateEmployee(employee?.mydata?.data?.[0]?._id, {
             ...values,
             profile_image: image?.data?.filename,
           })
         ).then(() => {
           form.reset();
+           notifications.show({
+             title: "Success",
+             message: "Successfully Updated Your Profile",
+             autoClose: 8000,
+           });
         });
       
     };
@@ -121,9 +131,9 @@ export function Setting() {
           >
             <Avatar
               component="a"
-              href={imageUrl || employee?.employee.data?.[0]?.profile_image}
+              href={imageUrl || employee.mydata.data?.[0].profile_image}
               target="_blank"
-              src={imageUrl || employee?.employee.data?.[0]?.profile_image}
+              src={imageUrl || employee.mydata.data?.[0].profile_image}
               alt="it's me"
               radius="5em"
               size="7em"
@@ -167,7 +177,6 @@ export function Setting() {
             onChange={(e) =>
               form.setValues({ ...form.values, name: e.target.value })
             }
-   
           />
           <TextInput
             label="Email"
@@ -180,6 +189,7 @@ export function Setting() {
             onChange={(e) =>
               form.setValues({ ...form.values, email: e.target.value })
             }
+            {...form.getInputProps("email")}
           />
           <TextInput
             label="Phone"
@@ -192,6 +202,7 @@ export function Setting() {
             onChange={(e) =>
               form.setValues({ ...form.values, phone: e.target.value })
             }
+            {...form.getInputProps("phone")}
           />
           <TextInput
             label="Department"
@@ -205,7 +216,7 @@ export function Setting() {
               form.setValues({ ...form.values, department: e.target.value })
             }
           />
-        
+
           <Button
             variant="gradient"
             gradient={{ from: "teal", to: "lime", deg: 105 }}

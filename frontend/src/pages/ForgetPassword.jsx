@@ -16,7 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { useForm, isEmail } from "@mantine/form";
 import {password} from "../redux/action/password.action"
 export function ForgotPassword() {
      const form = useForm({
@@ -24,11 +24,11 @@ export function ForgotPassword() {
          email: "",
        },
        validate: {
-         email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+         email: isEmail("Invalid email"),
        },
      });
       const onSubmit = (values) => {
-       // console.log(values)
+
        dispatch(password(values));
         form.reset();
       };
@@ -67,6 +67,7 @@ export function ForgotPassword() {
             name="email"
             value={form.values["email"]}
             onChange={handleFieldChange}
+            {...form.getInputProps("email")}
             required
           />
           <Group position="apart" mt="lg">

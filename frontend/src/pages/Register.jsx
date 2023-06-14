@@ -15,7 +15,7 @@ import {
   Notification,
 } from "@mantine/core";
 import { IconCamera, IconCheck, IconX } from "@tabler/icons-react";
-import { useForm, isEmail } from "@mantine/form";
+import { useForm, isEmail, isNotEmpty } from "@mantine/form";
 import { register } from "../redux/action/register.action";
 import { imageUpload } from "../redux/action/imageUpload.action";
 import { roles } from "../redux/action/role.action";
@@ -51,28 +51,46 @@ export function Register() {
       profile_image: "",
       firm_email: "",
       firm_address: "",
-      role_id: "",
+      
     },
-    validationRules: {
-      name: [{ required: true, error: "Name is required" }],
-      password: [
-        { required: true, error: "Password is required" },
-        { minLength: 6, error: "Password must be at least 6 characters long" },
-      ],
-      confirmPassword: [
-        { required: true, error: "Confirm Password is required" },
-        { equalsField: "password", error: "Passwords do not match" },
-      ],
+    validate: {
+      email: isEmail("Invalid email"),
+      firm_email: isEmail("Invalid email"),
+     
     },
   });
    const nextStep = () => {
-      if (form.isValid()) {
+     const name = form.values.name;
+     const password = form.values.password;
+    const confirmPassword = form.values.confirmPassword;
+     // Perform validation
+     if (!name) {
+      form.setErrors({ name: "Invalid Name" });
+       return; // Stop further execution
+     }
+
+     if (!password) {
+      console.log("mesh")
+       form.setErrors({ password: "Invalid password" });
+       return; // Stop further execution
+     }
+     
+  if (password !== confirmPassword) {
+    form.setErrors({ confirmPassword: "Passwords do not match" });
+    return; // Stop further execution
+  }
         setActive((prevActive) => prevActive + 1);
-      }
+      
   }
   const onSubmit = async (values) => {
-   
-    await dispatch(
+       if (
+         values.phone &&
+         (!/^\d+$/.test(values.phone) || values.phone.trim().length !== 10)
+       ) {
+         form.setErrors({ phone: "Invalid phone number" });
+         return;
+       }
+      dispatch(
       register({ ...values, profile_image: image?.data?.filename})
     );
     form.reset();
@@ -83,19 +101,11 @@ export function Register() {
     const { name, value } = event.target;
     form.setFieldValue(name, value);
   };
-  const roless = useSelector((state) => state.role);
-  if (roless?.role?.data) {
-    var data = roless?.role?.data?.map((data) => ({
-      label: data?.name,
-      value: data?._id,
-    }));
-  } else {
-    data = [];
-  }
-   const handleSelectChange = (selectedOption) => {
-     console.log("Selected ID:", selectedOption);
-     form.setValues({ ...form.values, role_id: selectedOption });
-   };
+
+  //  const handleSelectChange = (selectedOption) => {
+  //    console.log("Selected ID:", selectedOption);
+  //    form.setValues({ ...form.values, role_id: selectedOption });
+  //  };
 
   const fileupload = async (e) => {
     const file = e.target.files[0];
@@ -201,6 +211,7 @@ export function Register() {
                 name="password"
                 labelProps={{ display: "flex" }}
                 color="#DEE2E6"
+                {...form.getInputProps("password")}
               />
 
               <PasswordInput
@@ -256,9 +267,10 @@ export function Register() {
                 required
                 labelProps={{ display: "flex" }}
                 color="#DEE2E6"
+                {...form.getInputProps("email")}
               />
 
-              <SimpleGrid cols={2}>
+           
                 <div>
                   {" "}
                   <TextInput
@@ -270,21 +282,11 @@ export function Register() {
                     onChange={handleFieldChange}
                     name="phone"
                     labelProps={{ display: "flex" }}
+                    {...form.getInputProps("phone")}
                   />
                 </div>
-                <div>
-                  <Select
-                    mt={15}
-                    label="Role"
-                    data={data}
-                    placeholder="Select item"
-                    nothingFound="Nothing found"
-                    value={form.values.role_id}
-                    onChange={handleSelectChange}
-                    labelProps={{ display: "flex" }}
-                  />
-                </div>
-              </SimpleGrid>
+               
+             
 
               <TextInput
                 mt={15}
@@ -306,13 +308,13 @@ export function Register() {
                 onChange={handleFieldChange}
                 name="firm_email"
                 labelProps={{ display: "flex" }}
+                {...form.getInputProps("firm_email")}
               />
 
               <TextInput
                 mt={15}
                 label="Firm Address"
                 placeholder="Your Firm Address"
-                required
                 value={form.values["firm_address"]}
                 onChange={handleFieldChange}
                 name="firm_address"

@@ -15,7 +15,7 @@ import "../assets/MyBackground.css";
 export function TenderList() {
       const dispatch = useDispatch();
        const tender = useSelector((state) => state.tender);
-       //console.log(tender)
+       console.log(tender,"tender")
        useEffect(() => {
            dispatch(tenders())
        }, [dispatch])

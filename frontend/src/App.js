@@ -22,6 +22,8 @@ import { TenderList } from "./components/tender";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import PrivateRoute from "./utils/authGuard";
+import { AddTender } from "./pages/addTender";
+import AdminRoute from "./utils/adminGuard";
 function App() {
   return (
     <div className="App">
@@ -44,18 +46,16 @@ function App() {
           <Routes>
             <Route index path="/" element={<WelcomePage />} />
             <Route path="/contact" element={<ContactUS />} />
+            <Route path="/tender" element={<AddTender />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
-            <Route
-              path="/reset-token/:token"
-              element={<ResetPassword />}
-            />
+            <Route path="/reset-token/:token" element={<ResetPassword />} />
             <Route exact path="/" element={<PrivateRoute />}>
               <Route path="/home" element={<Home />}>
                 <Route path="/home" element={<TaskCard />} />
                 <Route path="/home/client" element={<ClientTable />} />
-                <Route path="/home/employee" element={<EmployeeTable />} />
+
                 <Route path="/home/addclient" element={<AddClient />}>
                   <Route path="/home/addclient/:id" element={<AddClient />} />
                 </Route>
@@ -64,12 +64,16 @@ function App() {
                   <Route path="/home/addtask/:id" element={<AddEditTask />} />
                 </Route>
                 <Route path="/home/setting" element={<Setting />} />
-                <Route path="/home/addemployee" element={<AddEmployee />}>
-                  <Route
-                    path="/home/addemployee/:id"
-                    element={<AddEmployee />}
-                  />
+                <Route exact path="/home" element={<AdminRoute role="admin" />}>
+                  <Route path="/home/employee" element={<EmployeeTable />} />
+                  <Route path="/home/addemployee" element={<AddEmployee />}>
+                    <Route
+                      path="/home/addemployee/:id"
+                      element={<AddEmployee />}
+                    />
+                  </Route>
                 </Route>
+
                 <Route path="/home/document" element={<DocumentTable />} />
                 <Route path="/home/adddocument" element={<AddEditDocument />}>
                   <Route

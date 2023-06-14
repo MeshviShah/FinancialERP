@@ -9,6 +9,7 @@ import {
   TextInput,
   Select,
   MultiSelect,
+  Grid
 } from "@mantine/core";
 import { useForm,isNotEmpty } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ export function AddEditTask(props) {
   
 
    const clients = useSelector((state) => state.clientData);
+   
   useEffect(() => {
     dispatch(employee());
   }, [dispatch]);
@@ -107,8 +109,8 @@ const form = useForm({
     data = []        
   }
  //console.log(data)
-  if (clients?.client?.data) {
-    var clientdata = clients?.client?.data?.map((data) => ({
+  if (clients?.clients?.data) {
+    var clientdata = clients?.clients?.data?.map((data) => ({
       label: data?.name,
       value: data?._id,
     }));
@@ -201,9 +203,42 @@ const form = useForm({
                 form.setValues({ ...form.values, task_status: e.target.value })
               }
             />
-            <Button fullWidth mt="xl" w="30%" radius="md" type="submit">
-              {mode === "add" ? "Add Task" : "Update Task"}
-            </Button>
+            <Grid>
+              <Grid.Col span={6}>
+                {" "}
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                  ml={150}
+                  onClick={() => navigate("/home/task")}
+                >
+                  {" "}
+                  Back
+                </Button>{" "}
+              </Grid.Col>
+              <Grid.Col span={6}>
+                {" "}
+                <Button
+                  align="right"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime", deg: 105 }}
+                  fullWidth
+                  mt="xl"
+                  w="40%"
+                  radius="md"
+                  type="submit"
+                >
+                  {mode === "add" ? "Add" : "Update"}
+                </Button>
+              </Grid.Col>
+            </Grid>
+          
           </form>
         </Paper>
       </ScrollArea>
