@@ -62,6 +62,7 @@ return res.status(500).json({ message: error.message, statusCode: 500 });
 //Update User By Id
 export async function updateUserController(req, res) {
   const data = req.body;
+  console.log(data,"data")
   const id = req.params.id;
   try {
      if (!ObjectId.isValid(id)) {
@@ -107,7 +108,7 @@ export async function getUserByIdController(req, res) {
   // console.log(id)
   try {
      const result = await getMyDataService(id, firm_id);
-     console.log(result);
+     console.log(result,"result");
      if (result == null || result == undefined || result.length <= 0)
        return res
          .status(404)

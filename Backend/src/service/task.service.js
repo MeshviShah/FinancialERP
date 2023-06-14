@@ -112,5 +112,6 @@ export async function countTaskService(firm_id) {
       $count: "totalCount",
     },
   ]);
-  return result?.[0].totalCount;
+  console.log(result)
+  return result;
 }

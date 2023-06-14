@@ -1,11 +1,11 @@
 import { document } from "../models/document.model.js";
 import { Types } from "mongoose";
-import { profileImage } from "../utils/image.utils.js";
 import { getAllClientService } from "./client.service.js";
+import { profileImage } from "../utils/image.utils.js";
 const { ObjectId } = Types;
 
 export async function CreatDocumentService(data) {
-  console.log(data)
+
   const result = await document.create(data); //Creat Document Query
   return result;
 }
@@ -50,10 +50,34 @@ export async function getDocumentService(id) {
       },
     },
   ]); //Get Document By Id Query
-  return result;
+  
+  
+  return result.map((u) => {
+    const { file,  ...rest } = u;
+
+    if (file) {
+      const image = profileImage(file);
+      const updatedDoc = {
+        ...rest,
+        file: image,
+      };
+
+      return updatedDoc;
+    } else {
+      const userWithoutPassword = { ...rest };
+      return userWithoutPassword;
+    }
+  });
 }
 export async function getAllDocumentService(data,id,firm_id,role_name) {
-   let matchStage = {}
+    
+  let matchStage = { 
+     
+        $or: [
+          { name: { $regex: data.search, $options: "i" } },
+          // { email: { $regex: data.search, $options: "i" } },
+        ],
+      };
    if (role_name !== "admin") {
      matchStage = {
        ...matchStage,
@@ -62,7 +86,7 @@ export async function getAllDocumentService(data,id,firm_id,role_name) {
    }
    if (role_name == "admin") {
      const employee = await getAllClientService(
-       data = {
+       {
          search: "",
          order: "",
          sortField: "",
@@ -74,8 +98,8 @@ export async function getAllDocumentService(data,id,firm_id,role_name) {
        firm_id
      );
      //console.log(employee)
-     const ids = employee.map((item) => item._id);
-     //console.log(ids)
+     const ids = employee.map((item) => item?._id);
+     
      matchStage = {
        ...matchStage,
        client_id: { $in: ids.map((id) => new ObjectId(id)) },
@@ -100,19 +124,20 @@ export async function getAllDocumentService(data,id,firm_id,role_name) {
       },
     },
   ]); //Get All Document Query
+ 
   return result.map((u) => {
     const { file,  ...rest } = u;
-
+    
     if (file) {
       const image = profileImage(file);
       const updatedUser = {
         ...rest,
         file: image,
       };
-
-      return updatedUser;
+     
+       return updatedUser;
     } else {
-    
+     
       return u;
     }
   });

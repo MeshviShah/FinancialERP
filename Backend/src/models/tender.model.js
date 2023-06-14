@@ -36,7 +36,6 @@ const tenderSchema = new mongoose.Schema({
   industry: {
     type: String,
   },
-
   email: {
     type: String,
   },

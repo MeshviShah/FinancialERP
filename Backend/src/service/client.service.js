@@ -1,5 +1,6 @@
 import { client } from "../models/client.model.js";
 import { Types } from "mongoose";
+import { task} from "../models/task.models.js";
 const { ObjectId } = Types;
 
 export async function CreatClientService(data) {
@@ -48,7 +49,7 @@ export async function getClientService(id,firm_id) {
   return result;
 }
 export async function getAllClientService(data,firm_id) {
-  console.log(firm_id,"firm")
+  //console.log(data,"client")
   const result = await client.aggregate([
     {
       $match: {
@@ -101,6 +102,11 @@ export async function updateClientService(data, id) {
 
 export async function deleteClientService(ids) {
   const result = await client.deleteMany({ _id: { $in: ids } }); //Delete Client By ID query
+  if(result)   await task.deleteMany({ client_id: { $in: ids } });
+ 
+  // if(result){
+  //    var Task = ; 
+  // }
   return result;
 }
 
@@ -130,7 +136,7 @@ export async function getPaymentClientService(data) {
     },
     {
       $project: {
-        email: 1, // Include the fieldName field in the output document
+        email: 1, 
         _id: 1, // Exclude the _id field from the output document
       },
     },

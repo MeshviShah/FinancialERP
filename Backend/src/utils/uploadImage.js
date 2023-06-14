@@ -53,7 +53,7 @@ const upload = multer({
 
 export async function  uploadImage(req, res){
   try {
-    //console.log(req);
+    // console.log(req,"req");
     const tempLocation = req?.file?.path;   
     const filename = req.file?.filename
      //console.log("Uploaded file:", req.file);

@@ -9,6 +9,7 @@ import {
 import { resType } from "../response/res.types.js";
 import { Types } from "mongoose";
 import { getRoleService } from "../service/Role.service.js";
+import { queryBuilder } from "../utils/queryBuilder.js";
 const { ObjectId } = Types;
 // --->>Creat Document
 export async function creatDocumentController(req, res) {
@@ -48,14 +49,17 @@ export async function getDocumentController(req, res) {
 }
 //Get All Documents
 export async function getAllDocumentController(req, res) {
+   const query = req.query;
+   const data = await queryBuilder(query);
   const id=req.user.data.id
   const firm_id = req.user.data.firm_id;
   const role_id = req.user.data.role_id;
    const role = await getRoleService(role_id);
    
    const role_name = role.name;
-   const data={}
+  
   const result = await getAllDocumentService(data,id,firm_id,role_name);
+
   if (result == null || result == undefined || result.length <= 0)
     return res
       .status(404)

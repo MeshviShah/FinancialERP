@@ -44,7 +44,7 @@ export async function getUserService(id,firm_id) {
   ]);
 
   return result.map((u) => {
-    const { profile_image, password, ...rest } = u;
+    const { profile_image, ...rest } = u;
 
     if (profile_image) {
       const image = profileImage(profile_image);
@@ -95,7 +95,7 @@ export async function getAllUserService(data,firm_id) {
     },
   ]);
   return result.map((u) => {
-    const { profile_image, password, ...rest } = u;
+    const { profile_image, ...rest } = u;
    
     if(profile_image) {
       const image = profileImage(profile_image);
@@ -117,10 +117,11 @@ export async function getAllUserService(data,firm_id) {
 
 export async function updateUserService(id, data) {
   // console.log(id,"data")
+  console.log(id,"data")
   const result = await user.findByIdAndUpdate(id, data, { new: true }); //Update User By Id Query
   //const response = { ...result.toObject(), password: undefined }; // we can use ...result also
   
-  // console.log(result,"update")
+   console.log(result,"update")
    return result
    }
 
@@ -217,7 +218,7 @@ export async function getMyDataService(id, firm_id) {
   ]);
 
   return result.map((u) => {
-    const { profile_image, password, ...rest } = u;
+    const { profile_image, ...rest } = u;
 
     if (profile_image) {
       const image = profileImage(profile_image);

@@ -31,9 +31,10 @@ export async function sendMail({ email, link }) {
     };
     await transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
+        
+        return error
       } else {
-        console.log("Email sent: " + info.response);
+        return ("Email sent: " + info.response);
       }
     });
   } catch (error) {

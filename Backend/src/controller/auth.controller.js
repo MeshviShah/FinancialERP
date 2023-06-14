@@ -27,10 +27,13 @@ const API_URL = process.env.FRONTEND_API_URL;
 //Register Controller
 export async function registerController(req, res) {
   const result = req.body;
+  const role_id = "641aa625e9f4a78c1bac5601";
+  
   const session = await startSession();
    try {
-    session.startTransaction();
-  const resultfirm = await CreatFirmService(result, session); 
+    session.startTransaction(); 
+    const dataP = {...result,role_id}
+  const resultfirm = await CreatFirmService(dataP, session); 
   let firmId = resultfirm.id;
   const data = await registrationAuthService({...result , firm_id : firmId}, session);
     await session.commitTransaction();
@@ -83,13 +86,13 @@ export async function loginController(req, res) {
 export async function forgetPasswordController(req, res) {
   const result = req.body;
  
-  const data = await getUserByEmailService({ email: result.email });
+  const data = await getUserByEmailService({ email: result?.email });
   if (!data) return res.status(404).json({ response: resType.DATANOTAVAIABLE });
   const obj = {
-    email: data?.[0].email,
-    role_id: data?.[0].role_id,
-    firm_id: data?.[0].firm_id,
-    id: data?.[0].id,
+    email: data?.[0]?.email,
+    role_id: data?.[0]?.role_id,
+    firm_id: data?.[0]?.firm_id,
+    id: data?.[0]?.id,
   };
   console.log(obj,"obj")
   const etext = await encrypt(obj);
@@ -98,7 +101,7 @@ export async function forgetPasswordController(req, res) {
   //console.log(adata);
   const link = `${API_URL}/reset-token/:${accessToken}`;
   console.log(link);
-  const sendEmail = sendMail({ email: data?.[0].email, link: link });
+  const sendEmail = sendMail({ email: data?.[0]?.email, link: link });
   return res.status(200).json({ res: resType.SUCCESS, statusCode: 200});
 }
 
@@ -139,9 +142,10 @@ export async function resetPasswordController(req, res) {
   
       // const addToken = await CreatTokenService(adata);
       if (!passwordChange)
-        res
-          .status(403)
-          .json({ response: resType.CORRECTPASSWORD, statusCode: 404 });
+      {
+       return res.status(403).json({ response: resType.CORRECTPASSWORD, statusCode: 404 });
+      }
+        
       return res.status(200).json({ res: resType.SUCCESS, statusCode: 200 });
     });
   } else {
@@ -152,16 +156,26 @@ export async function resetPasswordController(req, res) {
 //Change Password
 export async function changePassword(req, res) {
   const { password, newPassword } = req.body;
-  const id = req.user.id;
+  const id = req.user.data.id;
   const findUser = await getUserById(id);
-  // console.log(findUser)
-  if (!findUser) res.status(403).json({ response: resType.DATANOTAVAIABLE,statusCode: 403 });
-  const comPass = await passwordBcrypt(password, findUser.password);
-  if (!comPass) res.status(401).json({ response: resType.CORRECTPASSWORD, statusCode: 401 });
-  const data = { password: await passwordHash(newPassword) };
-  const updatePassword = await updateUserService(id, data);
-  return res
-    .status(200)
-    .json({ data: updatePassword, res: resType.SUCCESS, statusCode: 200 });
+  try{
+  if (!findUser) {
+      return res.status(403).json({ response: resType.DATANOTAVAIABLE, statusCode: 403 });
+    }
+    console.log(findUser,"f")
+    const comPass = await passwordBcrypt(password, findUser?.password);
+    
+    if (!comPass) {
+      return res.status(401).json({ response: resType.CORRECTPASSWORD, statusCode: 401 });
+    }
+
+    const data = { password: await passwordHash(newPassword) };
+    const updatePassword = await updateUserService(id, data);
+
+    return res.status(200).json({ data: updatePassword, res: resType.SUCCESS, statusCode: 200 });
+  } catch (error) {
+
+    return res.status(500).json({ response: resType.ERROR, statusCode: 500 });
+  }
 }
 
